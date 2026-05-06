@@ -1,0 +1,97 @@
+/* Body con flexbox para centrar overlay */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Overlay */
+.overlay {
+    background: rgba(0,0,0,0.75);
+    padding: 30px;
+    border-radius: 12px;
+    display: inline-block;
+    box-shadow: 0 0 25px rgba(0,255,100,0.3);
+    backdrop-filter: blur(5px);
+    text-align: center;
+    z-index: 2;
+}
+
+/* Logo grande */
+.logo {
+    display: block;
+    margin: 10px auto 5px auto;
+    width: 280px;
+}
+
+/* Título principal */
+h1 {
+    text-align: center;
+    color: #00ff66;
+    margin-top: 5px;
+    font-size: 26px;
+}
+
+/* Subtítulos */
+h2 {
+    text-align: center;
+    color: #00ff66;
+    margin-top: 25px;
+}
+
+/* Contenedor */
+.container {
+    padding: 20px;
+}
+
+/* Tablas */
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: rgba(30,30,30,0.85);
+    color: #e0e0e0;
+    box-shadow: 0 0 15px rgba(0,255,100,0.25);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th {
+    background-color: #00cc55;
+    color: #000;
+    padding: 10px;
+    font-weight: 600;
+}
+
+td {
+    padding: 8px;
+    border: 1px solid #222;
+}
+
+tr:hover {
+    background-color: rgba(0,255,100,0.1);
+    transition: background 0.2s;
+}
+
+/* Botón volver al login */
+.volver-login {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.btn-login {
+    background-color: #0066ff;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-login:hover {
+    background-color: #3399ff;
+}
+

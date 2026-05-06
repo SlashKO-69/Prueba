@@ -1,0 +1,70 @@
+/* Centrado de la caja */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Caja central */
+.overlay {
+    background: rgba(0,0,0,0.75);
+    padding: 40px;
+    border-radius: 12px;
+    width: 380px;
+    box-shadow: 0 0 25px rgba(0,255,100,0.5);
+    backdrop-filter: blur(5px);
+    text-align: center;
+    z-index: 2;
+}
+
+/* Logo */
+.logo {
+    width: 280px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Título */
+.overlay h1 {
+    color: #00ff66;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+/* Labels */
+label {
+    display: block;
+    margin-top: 15px;
+    color: #eee;
+    font-size: 14px;
+    text-align: left;
+}
+
+/* Inputs */
+select, input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 6px;
+    background: #222;
+    color: #eee;
+}
+
+/* Botón */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 25px;
+    background: #00ff66;
+    border: none;
+    border-radius: 6px;
+    color: #111;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #00cc55;
+}
