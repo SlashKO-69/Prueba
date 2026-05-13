@@ -1,27 +1,29 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OperadorController;
+use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\ClienteController;
-use App\Http\Controllers\PersonalController;
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\SueldoController;
 
-// Pantalla de login de operadores
-Route::get('/login', [OperadorController::class, 'login'])->name('login');
+// ─── Raíz → Login ───────────────────────────────────────
+Route::get('/', [EmpleadoController::class, 'loginForm'])->name('empleados.loginForm');
+Route::post('/login', [EmpleadoController::class, 'login'])->name('empleados.login');
+Route::post('/logout', [EmpleadoController::class, 'logout'])->name('empleados.logout');
 
-// Procesa el acceso según el rol (administradora o recepcionista)
-Route::post('/authenticate', [OperadorController::class, 'authenticate'])->name('authenticate');
+// ─── CRUD Empleados ──────────────────────────────────────
+Route::resource('empleados', EmpleadoController::class);
 
-// Dashboard para administradora (clientes + personal)
-Route::get('/dashboard/admin', [OperadorController::class, 'dashboardAdmin'])->name('dashboard.admin');
-
-// Dashboard para recepcionista (solo clientes)
-Route::get('/dashboard/recepcionista', [OperadorController::class, 'dashboardRecepcionista'])->name('dashboard.recepcionista');
-
-// CRUD de clientes
+// ─── CRUD Clientes ───────────────────────────────────────
 Route::resource('clientes', ClienteController::class);
+Route::post('clientes/{ci}/reinscribir', [ClienteController::class, 'reinscribir'])->name('clientes.reinscribir');
 
-// CRUD de personal
-Route::resource('personals', PersonalController::class);
+// ─── Inscripciones ───────────────────────────────────────
+Route::resource('inscripciones', InscripcionController::class)->except(['edit', 'update', 'create']);
+Route::get('inscripciones/nueva', [InscripcionController::class, 'create'])->name('inscripciones.create');
+
+// ─── Sueldos (solo admin) ────────────────────────────────
+Route::get('sueldos', [SueldoController::class, 'index'])->name('sueldos.index');
+Route::post('sueldos', [SueldoController::class, 'store'])->name('sueldos.store');
+Route::patch('sueldos/{id}/pagar', [SueldoController::class, 'pagar'])->name('sueldos.pagar');
+Route::delete('sueldos/{id}', [SueldoController::class, 'destroy'])->name('sueldos.destroy');
