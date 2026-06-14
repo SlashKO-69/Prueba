@@ -2,69 +2,63 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>GymTrainner - Nuevo Empleado</title>
-    <link rel="stylesheet" href="{{ asset('css/fondo.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/empleados/base.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Empleado — GymTrainer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
 </head>
 <body>
 
-    @if($errors->any())
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error al guardar',
-                html: `{!! implode('<br>', $errors->all()) !!}`,
-                background: '#0a1428',
-                color: '#ff4444',
-                confirmButtonColor: '#d33',
-                backdrop: 'rgba(0,0,0,0.8)'
-            });
-        </script>
-    @endif
+@include('layouts.sidebar')
 
-    <div class="overlay">
-        <h1>Nuevo Empleado</h1>
+<div class="main-content">
+    <div class="page-header">
+        <h1 class="page-title">➕ Nuevo Empleado</h1>
+    </div>
 
+    <div class="card" style="max-width:500px;">
         <form action="{{ route('empleados.store') }}" method="POST">
             @csrf
 
-            <input type="hidden" name="rol" value="empleado">
+            <label class="form-label">CI *</label>
+            <input type="text" name="ci_empleado" class="form-input" value="{{ old('ci_empleado') }}">
+            @error('ci_empleado') <p class="error-msg">{{ $message }}</p> @enderror
 
-            <label for="ci_empleado">CI:</label>
-            <input type="text" name="ci_empleado" id="ci_empleado"
-                   value="{{ old('ci_empleado') }}" placeholder="Ej: 12345678" required>
+            <label class="form-label">Nombre *</label>
+            <input type="text" name="nombre" class="form-input" value="{{ old('nombre') }}">
+            @error('nombre') <p class="error-msg">{{ $message }}</p> @enderror
 
-            <label for="nombre">Nombre:</label>
-            <input type="text" name="nombre" id="nombre"
-                   value="{{ old('nombre') }}" placeholder="Ej: Juan" required>
+            <label class="form-label">Apellido Paterno *</label>
+            <input type="text" name="apaterno" class="form-input" value="{{ old('apaterno') }}">
+            @error('apaterno') <p class="error-msg">{{ $message }}</p> @enderror
 
-            <label for="apaterno">Apellido Paterno:</label>
-            <input type="text" name="apaterno" id="apaterno"
-                   value="{{ old('apaterno') }}" placeholder="Ej: Pérez" required>
+            <label class="form-label">Apellido Materno</label>
+            <input type="text" name="amaterno" class="form-input" value="{{ old('amaterno') }}" placeholder="Opcional">
 
-            <label for="amaterno">Apellido Materno:</label>
-            <input type="text" name="amaterno" id="amaterno"
-                   value="{{ old('amaterno') }}" placeholder="Ej: López">
+            <label class="form-label">Celular</label>
+            <input type="text" name="celular" class="form-input" value="{{ old('celular') }}" placeholder="Opcional">
 
-            <label for="celular">Celular:</label>
-            <input type="text" name="celular" id="celular"
-                   value="{{ old('celular') }}" placeholder="Ej: 70000000">
+            <label class="form-label">Rol *</label>
+            <select name="rol" class="form-select" required>
+                <option value="empleado" {{ old('rol')=='empleado'?'selected':'' }}>Empleado</option>
+                <option value="admin" {{ old('rol')=='admin'?'selected':'' }}>Administrador</option>
+            </select>
+            @error('rol') <p class="error-msg">{{ $message }}</p> @enderror
 
-            <label for="password">Contraseña:</label>
-            <input type="password" name="password" id="password"
-                   placeholder="Mínimo 6 caracteres" required>
+            <label class="form-label">Contraseña *</label>
+            <input type="password" name="password" class="form-input">
+            @error('password') <p class="error-msg">{{ $message }}</p> @enderror
 
-            <label for="password_confirmation">Confirmar Contraseña:</label>
-            <input type="password" name="password_confirmation"
-                   id="password_confirmation" placeholder="Repite la contraseña" required>
+            <label class="form-label">Confirmar Contraseña *</label>
+            <input type="password" name="password_confirmation" class="form-input">
 
-            <div class="botones">
-                <button type="submit">Guardar</button>
-                <a href="{{ route('empleados.index') }}" class="btn-cancelar">Cancelar</a>
+            <div class="form-botones">
+                <a href="{{ route('empleados.index') }}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar</button>
             </div>
         </form>
     </div>
+</div>
 
 </body>
 </html>

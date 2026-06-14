@@ -16,4 +16,9 @@ class Aparato extends Model
         'tipo_aparato',
         'estado_aparato',
     ];
+
+    public function informes()
+    {
+        return $this->hasMany(Informe::class, 'id_aparato', 'id_aparato');
+    }
 }

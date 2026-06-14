@@ -66,8 +66,17 @@ class SueldoController extends Controller
     {
         $this->soloAdmin();
 
-        $sueldo = Sueldo_o_Pago::findOrFail($id);
+        $sueldo = Sueldo_o_Pago::with('empleado')->findOrFail($id);
         $sueldo->update(['estado' => 'pagado']);
+
+        // Registro automático en flujo de caja
+        \App\Models\Flujo_Caja::create([
+            'asunto'          => 'Pago a empleado',
+            'cantidad_dinero' => $sueldo->monto,
+            'glosa'           => ($sueldo->empleado->nombre ?? '') . ' ' . ($sueldo->empleado->apaterno ?? '') . ' — CI: ' . $sueldo->ci_empleado,
+            'tipo'            => 'egreso',
+            'ci_empleado'     => $sueldo->ci_empleado,
+        ]);
 
         return redirect()->route('sueldos.index')->with('success', 'Sueldo marcado como pagado.');
     }

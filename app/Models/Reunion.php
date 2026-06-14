@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reunion extends Model
 {
-    protected $table = 'reuniones';
+    protected $table = 'reunions';
     protected $primaryKey = 'id_reunion';
     public $incrementing = true;
 
@@ -14,5 +14,10 @@ class Reunion extends Model
         'fecha_reunion',
         'hora_reunion',
         'motivo',
+        'asistencia',
+    ];
+
+    protected $casts = [
+        'asistencia' => 'array',
     ];
 }

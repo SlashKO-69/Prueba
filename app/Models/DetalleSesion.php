@@ -4,19 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Horario extends Model
+class DetalleSesion extends Model
 {
-    protected $table = 'horarios';
-    protected $primaryKey = 'id_horario';
+    protected $table = 'detalle_sesions';
+    protected $primaryKey = 'id_detalle';
     public $incrementing = true;
     protected $keyType = 'int';
 
     protected $fillable = [
+        'id_sesion',
         'ci_empleado',
-        'fecha',
-        'hora_entrada',
-        'hora_salida',
-        'turno',
+        'Detalles',
     ];
 
     public function empleado()

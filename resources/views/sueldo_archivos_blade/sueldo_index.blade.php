@@ -3,30 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sueldos</title>
+    <title>Sueldos — GymTrainer</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/pagos/pagos_table.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
 </head>
 <body>
 
-<div class="overlay-table">
-    <div class="table-header">
-        <h1>💰 Control de Sueldos</h1>
-        <div class="nav-links">
-            <a href="{{ route('empleados.index') }}" class="btn-nav">⚙️ Empleados</a>
-            <a href="{{ route('inscripciones.index') }}" class="btn-nav">📋 Inscripciones</a>
-            <button class="btn-nuevo" onclick="document.getElementById('modalNuevo').classList.add('active')">
-                + Registrar Pago
-            </button>
+@include('layouts.sidebar')
+
+<div class="main-content">
+    <div class="page-header">
+        <h1 class="page-title">💰 Control de Sueldos</h1>
+        <div class="page-actions">
+            <button class="btn btn-primary" onclick="document.getElementById('modalNuevo').classList.add('active')">+ Registrar Pago</button>
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="alert-success">✅ {{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="alert-error">⚠️ {{ session('error') }}</div>
-    @endif
+    @if(session('success')) <div class="alert-success">✅ {{ session('success') }}</div> @endif
+    @if(session('error')) <div class="alert-error">⚠️ {{ session('error') }}</div> @endif
 
     @php
         $pendientes = $sueldos->where('estado', 'pendiente')->count();
@@ -37,127 +31,115 @@
         })->sum('monto');
     @endphp
 
-    <div style="display:flex; gap:15px; margin-bottom:25px; flex-wrap:wrap;">
-        <div style="background:rgba(255,193,7,0.1); border:1px solid rgba(255,193,7,0.3); padding:15px 20px; border-radius:8px; flex:1; min-width:150px;">
-            <div style="color:#ffc107; font-size:12px; font-weight:600;">PENDIENTES</div>
-            <div style="color:#fff; font-size:26px; font-weight:700;">{{ $pendientes }}</div>
+    <div class="resumen">
+        <div class="resumen-card">
+            <p class="resumen-label" style="color:#ffc107;">PENDIENTES</p>
+            <p class="resumen-valor">{{ $pendientes }}</p>
         </div>
-        <div style="background:rgba(46,204,113,0.1); border:1px solid rgba(46,204,113,0.3); padding:15px 20px; border-radius:8px; flex:1; min-width:150px;">
-            <div style="color:#2ECC71; font-size:12px; font-weight:600;">PAGADOS ESTE MES</div>
-            <div style="color:#fff; font-size:26px; font-weight:700;">{{ $pagados }}</div>
+        <div class="resumen-card green">
+            <p class="resumen-label">PAGADOS ESTE MES</p>
+            <p class="resumen-valor">{{ $pagados }}</p>
         </div>
-        <div style="background:rgba(46,204,113,0.1); border:1px solid rgba(46,204,113,0.3); padding:15px 20px; border-radius:8px; flex:1; min-width:150px;">
-            <div style="color:#2ECC71; font-size:12px; font-weight:600;">TOTAL PAGADO MES</div>
-            <div style="color:#fff; font-size:26px; font-weight:700;">Bs. {{ number_format($totalMes, 0) }}</div>
+        <div class="resumen-card green">
+            <p class="resumen-label">TOTAL PAGADO MES</p>
+            <p class="resumen-valor">Bs. {{ number_format($totalMes, 0) }}</p>
         </div>
     </div>
 
-    @if($sueldos->isEmpty())
-        <div class="empty-state">No hay registros de sueldos aún.</div>
-    @else
-        <table>
-            <thead>
-                <tr>
-                    <th>Empleado</th>
-                    <th>CI</th>
-                    <th>Monto</th>
-                    <th>Fecha registro</th>
-                    <th>Días para cobro</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($sueldos as $sueldo)
-                @php
-                    $dias = $sueldo->dias_para_cobro;
-                    $diasClass = $dias <= 3 ? 'dias-warning' : 'dias-ok';
-                    if ($sueldo->estado === 'pagado') $diasClass = '';
-                @endphp
-                <tr>
-                    <td>
-                        {{ $sueldo->empleado->nombre ?? '—' }}
-                        {{ $sueldo->empleado->apaterno ?? '' }}
-                    </td>
-                    <td>{{ $sueldo->ci_empleado }}</td>
-                    <td>Bs. {{ number_format($sueldo->monto, 2) }}</td>
-                    <td>{{ \Carbon\Carbon::parse($sueldo->fecha_pago)->format('d/m/Y') }}</td>
-                    <td>
-                        @if($sueldo->estado === 'pagado')
-                            <span style="color:#555">—</span>
-                        @else
-                            <span class="{{ $diasClass }}">
-                                {{ $dias <= 0 ? '¡Hoy!' : $dias . ' días' }}
-                            </span>
-                        @endif
-                    </td>
-                    <td>
-                        <span class="badge {{ $sueldo->estado === 'pagado' ? 'badge-pagado' : 'badge-pendiente' }}">
-                            {{ ucfirst($sueldo->estado) }}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="acciones">
-                            @if($sueldo->estado === 'pendiente')
-                                <form action="{{ route('sueldos.pagar', $sueldo->id_sueldo) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="btn-accion btn-pagar">✓ Pagar</button>
-                                </form>
+    <div class="card">
+        @if($sueldos->isEmpty())
+            <div class="empty-state">No hay registros de sueldos aún.</div>
+        @else
+            <table>
+                <thead>
+                    <tr>
+                        <th>Empleado</th>
+                        <th>CI</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Días para cobro</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($sueldos as $sueldo)
+                    @php
+                        $dias = $sueldo->dias_para_cobro;
+                        $dc = $dias <= 3 ? 'dias-warning' : 'dias-ok';
+                        if($sueldo->estado === 'pagado') $dc = '';
+                    @endphp
+                    <tr>
+                        <td>{{ $sueldo->empleado->nombre ?? '—' }} {{ $sueldo->empleado->apaterno ?? '' }}</td>
+                        <td>{{ $sueldo->ci_empleado }}</td>
+                        <td>Bs. {{ number_format($sueldo->monto, 2) }}</td>
+                        <td>{{ \Carbon\Carbon::parse($sueldo->fecha_pago)->format('d/m/Y') }}</td>
+                        <td>
+                            @if($sueldo->estado === 'pagado') <span style="color:#555">—</span>
+                            @else <span class="{{ $dc }}">{{ $dias <= 0 ? '¡Hoy!' : $dias.' días' }}</span>
                             @endif
-                            <form action="{{ route('sueldos.destroy', $sueldo->id_sueldo) }}" method="POST"
-                                  onsubmit="return confirm('¿Eliminar este registro?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn-accion btn-eliminar">Eliminar</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    @endif
-
-    <div class="pie">
-        <span class="total-badge">Total registros: <span>{{ $sueldos->count() }}</span></span>
-        <form action="{{ route('empleados.logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn-logout">Cerrar sesión</button>
-        </form>
+                        </td>
+                        <td><span class="badge {{ $sueldo->estado==='pagado'?'badge-pagado':'badge-pendiente' }}">{{ ucfirst($sueldo->estado) }}</span></td>
+                        <td>
+                            <div class="dropdown" onclick="toggleDropdown(this)">
+                                <button class="dropdown-btn">Opciones▾</button>
+                                <div class="dropdown-menu">
+                                    @if($sueldo->estado === 'pendiente')
+                                        <form action="{{ route('sueldos.pagar', $sueldo->id_sueldo) }}" method="POST">
+                                            @csrf @method('PATCH')
+                                            <button type="submit" class="dropdown-item success">✓ Marcar como pagado</button>
+                                        </form>
+                                        <div class="dropdown-divider"></div>
+                                    @endif
+                                    <form action="{{ route('sueldos.destroy', $sueldo->id_sueldo) }}" method="POST"
+                                          onsubmit="return confirm('¿Eliminar?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="dropdown-item danger">🗑 Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div style="margin-top:16px;">
+                <span class="total-badge">Total: <span>{{ $sueldos->count() }}</span> registros</span>
+            </div>
+        @endif
     </div>
 </div>
 
-{{-- Modal Registrar Pago --}}
 <div class="modal-overlay" id="modalNuevo">
     <div class="modal-box">
-        <h2>💰 Registrar Pago de Sueldo</h2>
+        <h2 class="modal-title">💰 Registrar Pago de Sueldo</h2>
         <form action="{{ route('sueldos.store') }}" method="POST">
             @csrf
-
-            <label>Empleado *</label>
-            <select name="ci_empleado" required>
+            <label class="modal-label">Empleado *</label>
+            <select name="ci_empleado" class="modal-select" required>
                 <option value="">Seleccionar empleado...</option>
                 @foreach($empleados as $emp)
-                    <option value="{{ $emp->ci_empleado }}">
-                        {{ $emp->nombre }} {{ $emp->apaterno }} — CI: {{ $emp->ci_empleado }}
-                    </option>
+                    <option value="{{ $emp->ci_empleado }}">{{ $emp->nombre }} {{ $emp->apaterno }} — CI: {{ $emp->ci_empleado }}</option>
                 @endforeach
             </select>
-
-            <label>Monto (Bs.) *</label>
-            <input type="number" name="monto" value="2000" min="1" step="0.01" required>
-
+            <label class="modal-label">Monto (Bs.) *</label>
+            <input type="number" name="monto" class="modal-input" value="2000" min="1" step="0.01" required>
             <div class="modal-botones">
-                <button type="button" class="btn-modal-cancelar"
-                        onclick="document.getElementById('modalNuevo').classList.remove('active')">
-                    Cancelar
-                </button>
-                <button type="submit" class="btn-modal-guardar">Registrar</button>
+                <button type="button" class="modal-btn-cancel" onclick="document.getElementById('modalNuevo').classList.remove('active')">Cancelar</button>
+                <button type="submit" class="modal-btn-save">Registrar</button>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+function toggleDropdown(el) {
+    event.stopPropagation();
+    document.querySelectorAll('.dropdown.open').forEach(d => { if(d!==el) d.classList.remove('open'); });
+    el.classList.toggle('open');
+}
+document.addEventListener('click', () => document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open')));
+</script>
 
 </body>
 </html>

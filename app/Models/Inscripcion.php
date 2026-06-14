@@ -13,6 +13,7 @@ class Inscripcion extends Model
 
     protected $fillable = [
         'ci_cliente',
+        'id_promocion',
         'fecha_inscripcion',
         'fecha_vencimiento',
         'monto',
@@ -21,5 +22,10 @@ class Inscripcion extends Model
     public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'ci_cliente', 'Ci');
+    }
+
+    public function promocion()
+    {
+        return $this->belongsTo(Promocion::class, 'id_promocion', 'id_promocion');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cliente;
 use App\Models\Inscripcion;
+use App\Models\Promocion;
 use Carbon\Carbon;
 
 class ClienteController extends Controller
@@ -24,23 +25,25 @@ class ClienteController extends Controller
         $clientes->each(function ($cliente) {
             $ultima = $cliente->inscripciones->sortByDesc('fecha_vencimiento')->first();
             if ($ultima) {
-                $cliente->dias_restantes  = Carbon::today()->diffInDays(Carbon::parse($ultima->fecha_vencimiento), false);
+                $cliente->dias_restantes    = Carbon::today()->diffInDays(Carbon::parse($ultima->fecha_vencimiento), false);
                 $cliente->fecha_vencimiento = $ultima->fecha_vencimiento;
-                $cliente->monto           = $ultima->monto;
+                $cliente->monto             = $ultima->monto;
             } else {
-                $cliente->dias_restantes  = null;
+                $cliente->dias_restantes    = null;
                 $cliente->fecha_vencimiento = null;
-                $cliente->monto           = null;
+                $cliente->monto             = null;
             }
         });
 
-        return view('cliente_archivos_blade.cliente_index', compact('clientes'));
+        $promociones = Promocion::all();
+        return view('cliente_archivos_blade.cliente_index', compact('clientes', 'promociones'));
     }
 
     public function create()
     {
         $this->verificarSesion();
-        return view('cliente_archivos_blade.cliente_create');
+        $promociones = Promocion::all();
+        return view('cliente_archivos_blade.cliente_create', compact('promociones'));
     }
 
     public function store(Request $request)
@@ -48,21 +51,32 @@ class ClienteController extends Controller
         $this->verificarSesion();
 
         $request->validate([
-            'Ci'       => 'required|unique:clientes,Ci',
-            'nombre'   => 'required|string|max:100',
-            'apaterno' => 'required|string|max:100',
-            'amaterno' => 'nullable|string|max:100',
-            'meses'    => 'required|integer|min:1|max:24',
-            'monto'    => 'required|numeric|min:1',
+            'Ci'                   => 'required|unique:clientes,Ci',
+            'nombre'               => 'required|string|max:100',
+            'apaterno'             => 'required|string|max:100',
+            'amaterno'             => 'nullable|string|max:100',
+            'meses'                => 'required|integer|min:1|max:24',
+            'monto'                => 'required|numeric|min:1',
+            'id_promocion'         => 'nullable|exists:promocions,id_promocion',
         ]);
 
         $cliente = Cliente::create($request->only(['Ci', 'nombre', 'apaterno', 'amaterno']));
 
-        Inscripcion::create([
+        $inscripcion = Inscripcion::create([
             'ci_cliente'        => $cliente->Ci,
+            'id_promocion'      => $request->id_promocion ?: null,
             'fecha_inscripcion' => Carbon::today()->toDateString(),
             'fecha_vencimiento' => Carbon::today()->addMonths((int) $request->meses)->toDateString(),
             'monto'             => $request->monto,
+        ]);
+
+        // Registro automático en flujo de caja
+        \App\Models\Flujo_Caja::create([
+            'asunto'          => 'Inscripción de cliente',
+            'cantidad_dinero' => $request->monto,
+            'glosa'           => $cliente->nombre . ' ' . $cliente->apaterno . ' — CI: ' . $cliente->Ci,
+            'tipo'            => 'ingreso',
+            'ci_cliente'      => $cliente->Ci,
         ]);
 
         return redirect()->route('clientes.index')->with('success', 'Cliente inscrito correctamente.');
@@ -71,7 +85,7 @@ class ClienteController extends Controller
     public function show($ci)
     {
         $this->verificarSesion();
-        $cliente       = Cliente::with('inscripciones')->findOrFail($ci);
+        $cliente       = Cliente::with('inscripciones.promocion')->findOrFail($ci);
         $inscripciones = $cliente->inscripciones->sortByDesc('fecha_vencimiento');
         return view('cliente_archivos_blade.cliente_show', compact('cliente', 'inscripciones'));
     }
@@ -111,8 +125,9 @@ class ClienteController extends Controller
         $this->verificarSesion();
 
         $request->validate([
-            'meses' => 'required|integer|min:1|max:24',
-            'monto' => 'required|numeric|min:1',
+            'meses'        => 'required|integer|min:1|max:24',
+            'monto'        => 'required|numeric|min:1',
+            'id_promocion' => 'nullable|exists:promocions,id_promocion',
         ]);
 
         $cliente = Cliente::findOrFail($ci);
@@ -124,9 +139,19 @@ class ClienteController extends Controller
 
         Inscripcion::create([
             'ci_cliente'        => $ci,
+            'id_promocion'      => $request->id_promocion ?: null,
             'fecha_inscripcion' => Carbon::today()->toDateString(),
             'fecha_vencimiento' => $inicio->addMonths((int) $request->meses)->toDateString(),
             'monto'             => $request->monto,
+        ]);
+
+        // Registro automático en flujo de caja
+        \App\Models\Flujo_Caja::create([
+            'asunto'          => 'Inscripción de cliente',
+            'cantidad_dinero' => $request->monto,
+            'glosa'           => $cliente->nombre . ' ' . $cliente->apaterno . ' — CI: ' . $ci . ' (reinscripción)',
+            'tipo'            => 'ingreso',
+            'ci_cliente'      => $ci,
         ]);
 
         return redirect()->route('clientes.index')->with('success', 'Cliente reinscrito correctamente.');

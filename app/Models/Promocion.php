@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Promocion extends Model
 {
-     protected $table = 'promociones';
+     protected $table = 'promocions';
     protected $primaryKey = 'id_promocion';
     public $incrementing = true;
     protected $keyType = 'int';

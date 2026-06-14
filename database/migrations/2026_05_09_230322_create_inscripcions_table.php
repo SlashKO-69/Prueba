@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('ci_cliente')->nullable();
             $table->foreign('ci_cliente')->references('Ci')->on('clientes')->onDelete('cascade');
+            $table->unsignedBigInteger('id_promocion')->nullable();
             $table->date('fecha_inscripcion');
             $table->date('fecha_vencimiento');
             $table->decimal('monto', 8, 2);

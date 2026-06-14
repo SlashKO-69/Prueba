@@ -2,90 +2,82 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>GymTrainner - Empleados</title>
-    <link rel="stylesheet" href="{{ asset('css/fondo.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/empleados/base.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/empleados/tabla.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empleados — GymTrainer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
 </head>
 <body>
 
-    @if(session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: "{{ session('success') }}",
-                background: '#0a1428',
-                color: '#2ECC71',
-                confirmButtonColor: '#2ECC71',
-                timer: 2000,
-                showConfirmButton: false,
-                backdrop: 'rgba(0,0,0,0.8)'
-            });
-        </script>
-    @endif
+@include('layouts.sidebar')
 
-    <div class="overlay-table">
-       
-        <div class="table-header">
-            <h1>Empleados</h1>
-            <a href="{{ route('empleados.create') }}" class="btn-nuevo">+ Nuevo Empleado</a>
-             <a href="{{ route('clientes.index') }}" class="btn-nuevo">Mas opciones</a>
+<div class="main-content">
+    <div class="page-header">
+        <h1 class="page-title">⚙️ Gestión de Empleados</h1>
+        <div class="page-actions">
+            <a href="{{ route('empleados.create') }}" class="btn btn-primary">+ Nuevo Empleado</a>
         </div>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>CI</th>
-                    <th>Nombre</th>
-                    <th>Ap. Paterno</th>
-                    <th>Ap. Materno</th>
-                    <th>Celular</th>
-                    <th>Rol</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($empleados as $empleado)
+    </div>
+
+    @if(session('success')) <div class="alert-success">✅ {{ session('success') }}</div> @endif
+
+    <div class="card">
+        @if($empleados->isEmpty())
+            <div class="empty-state">No hay empleados registrados.</div>
+        @else
+            <table>
+                <thead>
+                    <tr>
+                        <th>CI</th>
+                        <th>Nombre</th>
+                        <th>Ap. Paterno</th>
+                        <th>Celular</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($empleados as $empleado)
                     <tr>
                         <td>{{ $empleado->ci_empleado }}</td>
                         <td>{{ $empleado->nombre }}</td>
                         <td>{{ $empleado->apaterno }}</td>
-                        <td>{{ $empleado->amaterno }}</td>
-                        <td>{{ $empleado->celular }}</td>
+                        <td>{{ $empleado->celular ?? '—' }}</td>
+                        <td><span class="badge {{ $empleado->rol==='admin'?'badge-activo':'badge-pendiente' }}">{{ ucfirst($empleado->rol) }}</span></td>
                         <td>
-                            <span class="badge-rol {{ $empleado->rol === 'admin' ? 'badge-admin' : 'badge-empleado' }}">
-                                {{ $empleado->rol === 'admin' ? 'Administrador' : 'Empleado' }}
-                            </span>
+                            <div class="dropdown" onclick="toggleDropdown(this)">
+                                <button class="dropdown-btn">Opciones ▾</button>
+                                <div class="dropdown-menu">
+                                    <a href="{{ route('empleados.show', $empleado->ci_empleado) }}" class="dropdown-item">👁 Ver detalle</a>
+                                    <a href="{{ route('empleados.edit', $empleado->ci_empleado) }}" class="dropdown-item warning">✏️ Editar</a>
+                                    <div class="dropdown-divider"></div>
+                                    <form action="{{ route('empleados.destroy', $empleado->ci_empleado) }}" method="POST"
+                                          onsubmit="return confirm('¿Eliminar empleado {{ $empleado->nombre }}?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="dropdown-item danger">🗑 Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
                         </td>
-                        <td class="acciones">
-                        <a href="{{ route('empleados.show', $empleado->ci_empleado) }}" class="btn-accion btn-ver">Ver</a>
-                        <a href="{{ route('empleados.edit', $empleado->ci_empleado) }}" class="btn-accion btn-editar">Editar</a>
-                        
-                        @if($empleado->rol !== 'admin')
-                            <form action="{{ route('empleados.destroy', $empleado->ci_empleado) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn-accion btn-eliminar"
-                                    onclick="return confirm('¿Seguro que deseas eliminar este empleado?')">
-                                    Eliminar
-                                </button>
-                            </form>
-                        @endif
-                    </td>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-        <div class="pie">
-            <form action="{{ route('empleados.logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="btn-logout">Cerrar Sesión</button>
-            </form>
-        </div>
+                    @endforeach
+                </tbody>
+            </table>
+            <div style="margin-top:16px;">
+                <span class="total-badge">Total: <span>{{ $empleados->count() }}</span> empleados</span>
+            </div>
+        @endif
     </div>
+</div>
+
+<script>
+function toggleDropdown(el) {
+    event.stopPropagation();
+    document.querySelectorAll('.dropdown.open').forEach(d => { if(d!==el) d.classList.remove('open'); });
+    el.classList.toggle('open');
+}
+document.addEventListener('click', () => document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open')));
+</script>
 
 </body>
 </html>
