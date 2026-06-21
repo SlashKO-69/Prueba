@@ -1,0 +1,235 @@
+/* etiquetas de estado */
+.Estado{
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+}
+
+.Estado-activo{ background: rgba(46,204,113,0.15); color: #2ECC71; border: 1px solid rgba(46,204,113,0.3); }
+.Estado-vencido{ background: rgba(220,53,69,0.15); color: #dc3545; border: 1px solid rgba(220,53,69,0.3); }
+.Estado-por-vencer{ background: rgba(255,193,7,0.15); color: #ffc107; border: 1px solid rgba(255,193,7,0.3); }
+.Estado-pendiente{ background: rgba(255,255,255,0.06); color: #aaa; border: 1px solid rgba(255,255,255,0.12); }
+.badge-pagado{ background: rgba(46,204,113,0.15); color: #2ECC71; border: 1px solid rgba(46,204,113,0.3); }
+.badge-ingreso{ background: rgba(46,204,113,0.15); color: #2ECC71; border: 1px solid rgba(46,204,113,0.3); }
+.badge-egreso{ background: rgba(220,53,69,0.15); color: #dc3545; border: 1px solid rgba(220,53,69,0.3); }
+
+.Dias_Ok{ color: #2ECC71; }
+.Dias_Aviso{ color: #ffc107; }
+.Dias_Peligro{ color: #dc3545; }
+
+/* botones generales */
+.Boton{
+    padding: 9px 18px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+}
+
+.Boton_Principal{ background: #2ECC71; color: #111; }
+.Boton_Secundario{ background: transparent; border: 1px solid #2ECC71; color: #2ECC71; }
+.Boton_Aviso{ background: #ffc107; color: #111; }
+.btn-danger{ background: #dc3545; color: #fff; }
+.btn-info{ background: #17a2b8; color: #fff; }
+.btn-purple{ background: #6f42c1; color: #fff; }
+
+.acciones{
+    display: flex;
+    gap: 6px;
+}
+
+.Sin_Registros{ text-align: center; padding: 50px; color: #444; }
+.Total_Registros{ color: #666; font-size: 13px; }
+.Total_Registros span{ color: #2ECC71; font-weight: bold; }
+
+/* tarjeta contenedora */
+.Tarjeta{
+    background: rgba(10,20,40,0.85);
+    border-radius: 12px;
+    padding: 28px;
+    border: 1px solid rgba(46,204,113,0.1);
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+/* encabezado de pagina */
+.Encabezado_Pagina{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.Acciones_Pagina{
+    display: flex;
+    gap: 10px;
+}
+
+/* menu desplegable de opciones en cada fila */
+.Menu_Opciones{
+    position: relative;
+    display: inline-block;
+}
+
+.Boton_Opciones{
+    padding: 7px 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 7px;
+    color: #eee;
+    cursor: pointer;
+}
+
+.Menu_Lista{
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: rgba(8,16,32,0.98);
+    border: 1px solid rgba(46,204,113,0.2);
+    border-radius: 8px;
+    min-width: 160px;
+    z-index: 10;
+    overflow: hidden;
+}
+.Menu_Opciones.open .Menu_Lista{ display: block; }
+
+.Menu_Item{
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    text-align: left;
+    text-decoration: none;
+}
+
+.Menu_Item:hover{ background: rgba(46,204,113,0.08); }
+.Menu_Item.Opcion_Peligro{ color: #ff6b6b; }
+.Menu_Item.Opcion_Aviso{ color: #ffc107; }
+.Menu_Item.Opcion_Exito{ color: #2ECC71; }
+.Menu_Item.Opcion_Especial{ color: #a78bfa; }
+.Menu_Divisor{ height: 1px; background: rgba(255,255,255,0.06); margin: 4px 0; }
+
+/* modales */
+.Modal_Fondo{
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.65);
+    justify-content: center;
+    align-items: center;
+}
+
+.Modal_Fondo.active{ display: flex; }
+
+.Modal_Caja{
+    background: rgba(8,16,32,0.98);
+    border: 1px solid rgba(46,204,113,0.25);
+    padding: 32px;
+    border-radius: 12px;
+    width: 420px;
+}
+
+.Modal_Titulo{
+    color: #2ECC71;
+    font-size: 17px;
+    margin-bottom: 20px;
+}
+
+.Modal_Etiqueta{
+    display: block;
+    color: #ccc;
+    font-size: 13px;
+    margin-top: 14px;
+    text-align: left;
+}
+
+.Modal_Input, .Modal_Select, .Modal_Textarea{
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 5px;
+    border: 1px solid rgba(46,204,113,0.2);
+    border-radius: 7px;
+    background: #0d1a30;
+    color: #eee;
+}
+
+.Modal_Botones{
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.Modal_Cancelar{
+    flex: 1;
+    padding: 11px;
+    background: transparent;
+    border: 1px solid rgba(255,68,68,0.4);
+    border-radius: 7px;
+    color: #ff6b6b;
+    cursor: pointer;
+}
+
+.Modal_Guardar{
+    flex: 1;
+    padding: 11px;
+    background: #2ECC71;
+    border: none;
+    border-radius: 7px;
+    color: #111;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* formularios */
+.Form_Etiqueta{
+    display: block;
+    color: #ccc;
+    font-size: 13px;
+    margin-top: 14px;
+}
+
+.Form_Input, .Form_Select{
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 5px;
+    border: 1px solid rgba(46,204,113,0.2);
+    border-radius: 7px;
+    background: #0d1a30;
+    color: #eee;
+}
+
+.Form_Error{ color: #ff6b6b; font-size: 12px; margin-top: 4px; }
+.Form_Botones{ display: flex; gap: 10px; margin-top: 24px; }
+
+/* mensajes */
+.Mostrar_Bien{
+    background: rgba(46,204,113,0.12);
+    border: 1px solid rgba(46,204,113,0.35);
+    color: #2ECC71;
+    padding: 12px 16px;
+    border-radius: 7px;
+    margin-bottom: 20px;
+}
+
+.Mostrar_Error{
+    background: rgba(220,53,69,0.12);
+    border: 1px solid rgba(220,53,69,0.35);
+    color: #ff6b6b;
+    padding: 12px 16px;
+    border-radius: 7px;
+    margin-bottom: 20px;
+}
+
+.Tarjeta p.Detalle_Etiqueta {
+    color: #2ECC71;
+}

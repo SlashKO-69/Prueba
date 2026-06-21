@@ -5,22 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscripciones — GymTrainer</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/fondo.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/componentes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tabla.css') }}">
 </head>
 <body>
 
 @include('layouts.sidebar')
 
-<div class="main-content">
-    <div class="page-header">
-        <h1 class="page-title">📋 Inscripciones</h1>
+<div class="Contenido_Principal">
+    <div class="Encabezado_Pagina">
+        <h1 class="Titulo_Pagina">📋 Inscripciones</h1>
     </div>
 
-    @if(session('success')) <div class="alert-success">✅ {{ session('success') }}</div> @endif
+    @if(session('success')) <div class="Mostrar_Bien">✅ {{ session('success') }}</div> @endif
 
-    <div class="card">
+    <div class="Tarjeta">
         @if($inscripciones->isEmpty())
-            <div class="empty-state">No hay inscripciones aún. Se generan al registrar un cliente.</div>
+            <div class="Sin_Registros">No hay inscripciones aún. Se generan al registrar un cliente.</div>
         @else
             <table>
                 <thead>
@@ -40,9 +43,9 @@
                     @foreach($inscripciones as $ins)
                     @php
                         $dias = $ins->dias_restantes;
-                        if ($dias < 0) { $sc='badge-vencido'; $st='Vencido'; $dc='dias-danger'; }
-                        elseif ($dias <= 5) { $sc='badge-por-vencer'; $st='Por vencer'; $dc='dias-warning'; }
-                        else { $sc='badge-activo'; $st='Activo'; $dc='dias-ok'; }
+                        if ($dias < 0) { $sc='Estado-vencido'; $st='Vencido'; $dc='Dias_Peligro'; }
+                        elseif ($dias <= 5) { $sc='Estado-por-vencer'; $st='Por vencer'; $dc='Dias_Aviso'; }
+                        else { $sc='Estado-activo'; $st='Activo'; $dc='Dias_Ok'; }
                     @endphp
                     <tr>
                         <td>{{ $ins->id }}</td>
@@ -52,12 +55,12 @@
                         <td>{{ \Carbon\Carbon::parse($ins->fecha_vencimiento)->format('d/m/Y') }}</td>
                         <td class="{{ $dc }}">{{ $dias < 0 ? abs($dias).' días vencido' : $dias.' días' }}</td>
                         <td>Bs. {{ number_format($ins->monto, 2) }}</td>
-                        <td><span class="badge {{ $sc }}">{{ $st }}</span></td>
+                        <td><span class="Estado {{ $sc }}">{{ $st }}</span></td>
                         <td>
-                            <div class="dropdown" onclick="toggleDropdown(this)">
-                                <button class="dropdown-btn">Opciones▾</button>
-                                <div class="dropdown-menu">
-                                    <a href="{{ route('inscripciones.show', $ins->id) }}" class="dropdown-item">👁 Ver detalle</a>
+                            <div class="Menu_Opciones" onclick="toggleDropdown(this)">
+                                <button class="Boton_Opciones">Opciones▾</button>
+                                <div class="Menu_Lista">
+                                    <a href="{{ route('inscripciones.show', $ins->id) }}" class="Menu_Item">👁 Ver detalle</a>
                                 </div>
                             </div>
                         </td>
@@ -66,20 +69,18 @@
                 </tbody>
             </table>
             <div style="margin-top:16px;">
-                <span class="total-badge">Total: <span>{{ $inscripciones->count() }}</span> inscripciones</span>
+                <span class="Total_Registros">Total: <span>{{ $inscripciones->count() }}</span> inscripciones</span>
             </div>
         @endif
     </div>
 </div>
-
 <script>
 function toggleDropdown(el) {
     event.stopPropagation();
-    document.querySelectorAll('.dropdown.open').forEach(d => { if(d!==el) d.classList.remove('open'); });
+    document.querySelectorAll('.Menu_Opciones.open').forEach(d => { if(d!==el) d.classList.remove('open'); });
     el.classList.toggle('open');
 }
-document.addEventListener('click', () => document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open')));
+document.addEventListener('click', () => document.querySelectorAll('.Menu_Opciones.open').forEach(d => d.classList.remove('open')));
 </script>
-
 </body>
 </html>

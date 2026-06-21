@@ -1,0 +1,47 @@
+/* fila de tarjetas con totales (ingresos, egresos, saldo, pendientes) */
+.dinero{
+    display: flex;
+    gap: 14px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.dinero-card{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 16px 20px;
+    flex: 1;
+    min-width: 150px;
+}
+
+.dinero-card.green{
+    background: rgba(46,204,113,0.08);
+    border-color: rgba(46,204,113,0.2);
+}
+
+.dinero-card.red{
+    background: rgba(220,53,69,0.08);
+    border-color: rgba(220,53,69,0.2);
+}
+
+.dinero-label{
+    font-size: 11px;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 6px;
+}
+
+.dinero-card.green .dinero-label{
+    color: #2ECC71;
+}
+
+.dinero-card.red .dinero-label{
+    color: #dc3545;
+}
+
+.dinero-valor{
+    font-size: 26px;
+    font-weight: bold;
+    color: #fff;
+}

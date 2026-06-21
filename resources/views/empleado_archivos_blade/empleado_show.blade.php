@@ -5,31 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle Empleado — GymTrainer</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/fondo.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/componentes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tabla.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/detalle.css') }}">
 </head>
 <body>
 
 @include('layouts.sidebar')
 
-<div class="main-content">
-    <div class="page-header">
-        <h1 class="page-title">👤 Detalle del Empleado</h1>
-        <div class="page-actions">
-            <a href="{{ route('empleados.edit', $empleado->ci_empleado) }}" class="btn btn-warning">✏️ Editar</a>
-            <a href="{{ route('empleados.index') }}" class="btn btn-secondary">← Volver</a>
+<div class="Contenido_Principal">
+    <div class="Encabezado_Pagina">
+        <h1 class="Titulo_Pagina">👤 Detalle del Empleado</h1>
+        <div class="Acciones_Pagina">
+            <a href="{{ route('empleados.edit', $empleado->ci_empleado) }}" class="Boton Boton_Aviso">✏️ Editar</a>
+            <a href="{{ route('empleados.index') }}" class="Boton Boton_Secundario">← Volver</a>
         </div>
     </div>
 
-    <div class="card" style="max-width:500px;">
-        <div class="detalle">
-            <div class="detalle-fila"><span class="detalle-label">CI</span><span class="detalle-valor">{{ $empleado->ci_empleado }}</span></div>
-            <div class="detalle-fila"><span class="detalle-label">Nombre</span><span class="detalle-valor">{{ $empleado->nombre }}</span></div>
-            <div class="detalle-fila"><span class="detalle-label">Ap. Paterno</span><span class="detalle-valor">{{ $empleado->apaterno }}</span></div>
-            <div class="detalle-fila"><span class="detalle-label">Ap. Materno</span><span class="detalle-valor">{{ $empleado->amaterno ?? '—' }}</span></div>
-            <div class="detalle-fila"><span class="detalle-label">Celular</span><span class="detalle-valor">{{ $empleado->celular ?? '—' }}</span></div>
-            <div class="detalle-fila">
-                <span class="detalle-label">Rol</span>
-                <span class="badge {{ $empleado->rol==='admin'?'badge-activo':'badge-pendiente' }}">{{ ucfirst($empleado->rol) }}</span>
+    <div class="Tarjeta" style="max-width:500px;">
+        <div class="Detalle">
+            <div class="Detalle_Fila"><span class="Detalle_Etiqueta">CI</span><span class="Detalle_Valor">{{ $empleado->ci_empleado }}</span></div>
+            <div class="Detalle_Fila"><span class="Detalle_Etiqueta">Nombre</span><span class="Detalle_Valor">{{ $empleado->nombre }}</span></div>
+            <div class="Detalle_Fila"><span class="Detalle_Etiqueta">Ap. Paterno</span><span class="Detalle_Valor">{{ $empleado->apaterno }}</span></div>
+            <div class="Detalle_Fila"><span class="Detalle_Etiqueta">Ap. Materno</span><span class="Detalle_Valor">{{ $empleado->amaterno ?? '—' }}</span></div>
+            <div class="Detalle_Fila"><span class="Detalle_Etiqueta">Celular</span><span class="Detalle_Valor">{{ $empleado->celular ?? '—' }}</span></div>
+            <div class="Detalle_Fila">
+                <span class="Detalle_Etiqueta">Rol</span>
+                <span class="Estado {{ $empleado->rol==='admin'?'Estado-activo':'Estado-pendiente' }}">{{ ucfirst($empleado->rol) }}</span>
             </div>
         </div>
     </div>

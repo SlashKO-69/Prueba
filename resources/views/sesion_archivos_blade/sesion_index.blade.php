@@ -5,26 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sesiones — GymTrainer</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/fondo.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/componentes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tabla.css') }}">
 </head>
 <body>
 
 @include('layouts.sidebar')
 
-<div class="main-content">
-    <div class="page-header">
-        <h1 class="page-title">🏋️ Control de Sesiones</h1>
-        <div class="page-actions">
-            <button class="btn btn-primary" onclick="document.getElementById('modalEntrada').classList.add('active')">🟢 Registrar Entrada</button>
+<div class="Contenido_Principal">
+    <div class="Encabezado_Pagina">
+        <h1 class="Titulo_Pagina">🏋️ Control de Sesiones</h1>
+        <div class="Acciones_pagina_sb">
+            <button class="Boton Boton_Principal" onclick="document.getElementById('modalEntrada').classList.add('active')">🟢 Registrar Entrada</button>
         </div>
     </div>
 
-    @if(session('success')) <div class="alert-success">✅ {{ session('success') }}</div> @endif
+    @if(session('success')) <div class="Mostrar_Bien">✅ {{ session('success') }}</div> @endif
     @if(session('error')) <div class="alert-error">⚠️ {{ session('error') }}</div> @endif
 
-    <div class="card">
+    <div class="Tarjeta">
         @if($sesiones->isEmpty())
-            <div class="empty-state">No hay sesiones registradas aún.</div>
+            <div class="Sin_Registros">No hay sesiones registradas aún.</div>
         @else
             <table>
                 <thead>
@@ -59,27 +62,27 @@
                         <td>{{ $duracion }}</td>
                         <td>
                             @if($enGym)
-                                <span class="badge badge-activo">En gym</span>
+                                <span class="Estado Estado-activo">En gym</span>
                             @else
-                                <span class="badge badge-pagado">Finalizado</span>
+                                <span class="Estado Estado-pendiente">Finalizado</span>
                             @endif
                         </td>
                         <td>
-                            <div class="dropdown" onclick="toggleDropdown(this)">
-                                <button class="dropdown-btn">Opciones▾</button>
-                                <div class="dropdown-menu">
-                                    <a href="{{ route('sesiones.show', $ses->id_sesion) }}" class="dropdown-item">👁 Ver detalle</a>
+                            <div class="Menu_Opciones" onclick="toggleDropdown(this)">
+                                <button class="Boton_Opciones">Opciones ▾</button>
+                                <div class="Menu_Lista">
+                                    <a href="{{ route('sesiones.show', $ses->id_sesion) }}" class="Menu_Item">👁 Ver detalle</a>
                                     @if($enGym)
-                                        <button class="dropdown-item danger"
+                                        <button class="Menu_Item Opcion_Peligro"
                                             onclick="abrirSalida({{ $ses->id_sesion }}, '{{ $ses->cliente->nombre ?? '' }} {{ $ses->cliente->apaterno ?? '' }}')">
                                             🔴 Registrar Salida
                                         </button>
                                     @endif
-                                    <div class="dropdown-divider"></div>
+                                    <div class="Menu_Divisor"></div>
                                     <form action="{{ route('sesiones.destroy', $ses->id_sesion) }}" method="POST"
                                           onsubmit="return confirm('¿Eliminar?')">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="dropdown-item danger">🗑 Eliminar</button>
+                                        <button type="submit" class="Menu_Item Opcion_Peligro">🗑 Eliminar</button>
                                     </form>
                                 </div>
                             </div>
@@ -89,23 +92,23 @@
                 </tbody>
             </table>
             <div style="margin-top:16px;">
-                <span class="total-badge">Total: <span>{{ $sesiones->count() }}</span> sesiones</span>
+                <span class="Total_Registros">Total: <span>{{ $sesiones->count() }}</span> sesiones</span>
             </div>
         @endif
     </div>
 </div>
 
 {{-- Modal Entrada --}}
-<div class="modal-overlay" id="modalEntrada">
-    <div class="modal-box">
-        <h2 class="modal-title">🟢 Registrar Entrada</h2>
+<div class="Modal_Fondo" id="modalEntrada">
+    <div class="Modal_Caja">
+        <h2 class="Modal_Titulo">🟢 Registrar Entrada</h2>
         <form action="{{ route('sesiones.entrada') }}" method="POST">
             @csrf
-            <label class="modal-label">Buscar cliente</label>
-            <input type="text" id="buscadorCliente" class="modal-input" placeholder="Escribe nombre o CI..."
+            <label class="Modal_Etiqueta">Buscar cliente</label>
+            <input type="text" id="buscadorCliente" class="Modal_Input" placeholder="Escribe nombre o CI..."
                    oninput="filtrarClientes(this.value)">
-            <label class="modal-label">Cliente inscrito *</label>
-            <select name="ci_cliente" id="selectCliente" class="modal-select" required size="5">
+            <label class="Modal_Etiqueta">Cliente inscrito *</label>
+            <select name="ci_cliente" id="selectCliente" class="Modal_Select" required size="5">
                 <option value="">Seleccionar...</option>
                 @foreach($clientesActivos as $cliente)
                     <option value="{{ $cliente->Ci }}"
@@ -114,45 +117,44 @@
                     </option>
                 @endforeach
             </select>
-            <div class="modal-botones">
-                <button type="button" class="modal-btn-cancel" onclick="cerrarModalEntrada()">Cancelar</button>
-                <button type="submit" class="modal-btn-save">Registrar</button>
+            <div class="Modal_Botones">
+                <button type="button" class="Modal_Cancelar" onclick="cerrarModalEntrada()">Cancelar</button>
+                <button type="submit" class="Modal_Guardar">Registrar</button>
             </div>
         </form>
     </div>
 </div>
 
 {{-- Modal Salida --}}
-<div class="modal-overlay" id="modalSalida">
-    <div class="modal-box">
-        <h2 class="modal-title">🔴 Registrar Salida</h2>
+<div class="Modal_Fondo" id="modalSalida">
+    <div class="Modal_Caja">
+        <h2 class="Modal_Titulo">🔴 Registrar Salida</h2>
         <p id="nombreClienteSalida" style="color:#888; font-size:13px; margin-bottom:10px;"></p>
         <form id="formSalida" method="POST">
             @csrf @method('PATCH')
-            <label class="modal-label">Empleado que atendió (opcional)</label>
-            <select name="ci_empleado" class="modal-select">
+            <label class="Modal_Etiqueta">Empleado que atendió (opcional)</label>
+            <select name="ci_empleado" class="Modal_Select">
                 <option value="">Sin empleado asignado</option>
                 @foreach($empleados as $emp)
                     <option value="{{ $emp->ci_empleado }}">{{ $emp->nombre }} {{ $emp->apaterno }}</option>
                 @endforeach
             </select>
-            <label class="modal-label">Detalle de la sesión *</label>
-            <textarea name="Detalles" class="modal-textarea" placeholder="Máquinas usadas, actividades..." required></textarea>
-            <div class="modal-botones">
-                <button type="button" class="modal-btn-cancel" onclick="document.getElementById('modalSalida').classList.remove('active')">Cancelar</button>
-                <button type="submit" class="modal-btn-save">Registrar Salida</button>
+            <label class="Modal_Etiqueta">Detalle de la sesión *</label>
+            <textarea name="Detalles" class="Modal_Textarea" placeholder="Máquinas usadas, actividades..." required></textarea>
+            <div class="Modal_Botones">
+                <button type="button" class="Modal_Cancelar" onclick="document.getElementById('modalSalida').classList.remove('active')">Cancelar</button>
+                <button type="submit" class="Modal_Guardar">Registrar Salida</button>
             </div>
         </form>
     </div>
 </div>
-
 <script>
 function toggleDropdown(el) {
     event.stopPropagation();
-    document.querySelectorAll('.dropdown.open').forEach(d => { if(d!==el) d.classList.remove('open'); });
+    document.querySelectorAll('.Menu_Opciones.open').forEach(d => { if(d!==el) d.classList.remove('open'); });
     el.classList.toggle('open');
 }
-document.addEventListener('click', () => document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open')));
+document.addEventListener('click', () => document.querySelectorAll('.Menu_Opciones.open').forEach(d => d.classList.remove('open')));
 
 function filtrarClientes(texto) {
     const filtro = texto.toLowerCase();
@@ -172,6 +174,5 @@ function abrirSalida(id, nombre) {
     document.getElementById('modalSalida').classList.add('active');
 }
 </script>
-
 </body>
 </html>

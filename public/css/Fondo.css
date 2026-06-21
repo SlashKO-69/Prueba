@@ -1,18 +1,10 @@
 body {
     margin: 0;
     height: 100vh;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins';
     background:
         linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-        url('/images/Aparatos gym 1.png') center center / cover no-repeat;
-    background-blend-mode: darken;
+        url('/images/Aparatos gym 2.png') center center / cover no-repeat;
     overflow: hidden;
-}
-body::after {
-    content: "";
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.45);
-    z-index: -1;
+    display: flex;
 }

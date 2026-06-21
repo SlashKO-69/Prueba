@@ -5,25 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bandeja — GymTrainer</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/fondo.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/componentes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tabla.css') }}">
 </head>
 <body>
 
 @include('layouts.sidebar')
 
-<div class="main-content">
-    <div class="page-header">
-        <h1 class="page-title">📬 Bandeja</h1>
+<div class="Contenido_Principal">
+    <div class="Encabezado_Pagina">
+        <h1 class="Titulo_Pagina">📬 Bandeja</h1>
     </div>
 
-    @if(session('success')) <div class="alert-success">✅ {{ session('success') }}</div> @endif
+    @if(session('success')) <div class="Mostrar_Bien">✅ {{ session('success') }}</div> @endif
 
     @if(session('empleado_rol') === 'admin')
         {{-- ADMIN: reportes de máquinas --}}
-        <div class="card">
-            <p style="color:#2ECC71; font-size:12px; font-weight:700; letter-spacing:0.8px; margin-bottom:16px;">REPORTES DE EQUIPOS</p>
+        <div class="Tarjeta">
+            <p class="Detalle_Etiqueta" style="font-weight:700; letter-spacing:0.8px; margin-bottom:16px;">REPORTES DE EQUIPOS</p>
             @if($informes->isEmpty())
-                <div class="empty-state">No hay reportes de fallas.</div>
+                <div class="Sin_Registros">No hay reportes de fallas.</div>
             @else
                 <table>
                     <thead>
@@ -45,16 +48,16 @@
                             <td>{{ \Carbon\Carbon::parse($informe->fecha_informe)->format('d/m/Y') }}</td>
                             <td>
                                 @if($informe->leido)
-                                    <span class="badge badge-pagado">Leído</span>
+                                    <span class="Estado Estado-activo">Leído</span>
                                 @else
-                                    <span class="badge badge-por-vencer">Nuevo</span>
+                                    <span class="Estado Estado-por-vencer">Nuevo</span>
                                 @endif
                             </td>
                             <td>
                                 @if(!$informe->leido)
                                     <form action="{{ route('bandeja.leido', $informe->id) }}" method="POST">
                                         @csrf @method('PATCH')
-                                        <button type="submit" class="btn btn-primary" style="font-size:12px; padding:6px 12px;">✓ Leído</button>
+                                        <button type="submit" class="Boton Boton_Principal" style="font-size:12px; padding:6px 12px;">✓ Leído</button>
                                     </form>
                                 @else
                                     <span style="color:#555; font-size:12px;">—</span>
@@ -65,17 +68,17 @@
                     </tbody>
                 </table>
                 <div style="margin-top:16px;">
-                    <span class="total-badge">Total: <span>{{ $informes->count() }}</span> reportes</span>
+                    <span class="Total_Registros">Total: <span>{{ $informes->count() }}</span> reportes</span>
                 </div>
             @endif
         </div>
 
     @else
         {{-- EMPLEADO: reuniones + reportar falla --}}
-        <div class="card" style="margin-bottom:20px;">
-            <p style="color:#2ECC71; font-size:12px; font-weight:700; letter-spacing:0.8px; margin-bottom:16px;">MIS REUNIONES</p>
+        <div class="Tarjeta" style="margin-bottom:20px;">
+            <p class="Detalle_Etiqueta" style="font-weight:700; letter-spacing:0.8px; margin-bottom:16px;">MIS REUNIONES</p>
             @if($reuniones->isEmpty())
-                <div class="empty-state">No tienes reuniones asignadas.</div>
+                <div class="Sin_Registros">No tienes reuniones asignadas.</div>
             @else
                 <table>
                     <thead>
@@ -92,13 +95,13 @@
                             $ci         = session('empleado_ci');
                             $asistencia = $reunion->asistencia ?? [];
                             $estado     = $asistencia[$ci] ?? 'pendiente';
-                            $bc         = $estado === 'asistió' ? 'badge-activo' : ($estado === 'no asistió' ? 'badge-vencido' : 'badge-pendiente');
+                            $sc         = $estado === 'asistió' ? 'Estado-activo' : ($estado === 'no asistió' ? 'Estado-vencido' : 'Estado-pendiente');
                         @endphp
                         <tr>
                             <td>{{ \Carbon\Carbon::parse($reunion->fecha_reunion)->format('d/m/Y') }}</td>
                             <td>{{ $reunion->hora_reunion }}</td>
                             <td>{{ $reunion->motivo }}</td>
-                            <td><span class="badge {{ $bc }}">{{ ucfirst($estado) }}</span></td>
+                            <td><span class="Estado {{ $sc }}">{{ ucfirst($estado) }}</span></td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -106,13 +109,13 @@
             @endif
         </div>
 
-        <div class="card">
-            <p style="color:#2ECC71; font-size:12px; font-weight:700; letter-spacing:0.8px; margin-bottom:16px;">⚠️ REPORTAR FALLA DE EQUIPO</p>
+        <div class="Tarjeta">
+            <p class="Detalle_Etiqueta" style="font-weight:700; letter-spacing:0.8px; margin-bottom:16px;">⚠️ REPORTAR FALLA DE EQUIPO</p>
             <form action="{{ route('bandeja.reportar') }}" method="POST" style="max-width:500px;">
                 @csrf
 
-                <label class="form-label">Seleccionar aparato *</label>
-                <select name="id_aparato" class="form-select" required>
+                <label class="Form_Etiqueta">Seleccionar aparato *</label>
+                <select name="id_aparato" class="Form_Select" required>
                     <option value="">Seleccionar...</option>
                     @foreach($aparatos as $ap)
                         <option value="{{ $ap->id_aparato }}">
@@ -121,18 +124,17 @@
                     @endforeach
                 </select>
 
-                <label class="form-label">Descripción de la falla *</label>
-                <textarea name="detalle" class="form-input" rows="3"
+                <label class="Form_Etiqueta">Descripción de la falla *</label>
+                <textarea name="detalle" class="Form_Input" rows="3"
                           placeholder="Describe el problema..." required
                           style="resize:vertical;"></textarea>
 
-                <div style="margin-top:16px;">
-                    <button type="submit" class="btn btn-danger">⚠️ Enviar reporte</button>
+                <div class="Form_Botones">
+                    <button type="submit" class="Boton btn-danger">⚠️ Enviar reporte</button>
                 </div>
             </form>
         </div>
     @endif
 </div>
-
 </body>
 </html>

@@ -5,27 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Promociones — GymTrainer</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/fondo.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/componentes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tabla.css') }}">
 </head>
 <body>
 
 @include('layouts.sidebar')
 
-<div class="main-content">
-    <div class="page-header">
-        <h1 class="page-title">🎁 Promociones</h1>
-        <div class="page-actions">
+<div class="Contenido_Principal">
+    <div class="Encabezado_Pagina">
+        <h1 class="Titulo_Pagina">🎁 Promociones</h1>
+        <div class="Acciones_pagina_sb">
             @if(session('empleado_rol') === 'admin')
-                <button class="btn btn-primary" onclick="document.getElementById('modalNueva').classList.add('active')">+ Nueva Promoción</button>
+                <button class="Boton Boton_Principal" onclick="document.getElementById('modalNueva').classList.add('active')">+ Nueva Promoción</button>
             @endif
         </div>
     </div>
 
-    @if(session('success')) <div class="alert-success">✅ {{ session('success') }}</div> @endif
+    @if(session('success')) <div class="Mostrar_Bien">✅ {{ session('success') }}</div> @endif
 
-    <div class="card">
+    <div class="Tarjeta">
         @if($promociones->isEmpty())
-            <div class="empty-state">No hay promociones registradas.</div>
+            <div class="Sin_Registros">No hay promociones registradas.</div>
         @else
             <table>
                 <thead>
@@ -44,18 +47,18 @@
                         <td>{{ $promo->requisito }}</td>
                         @if(session('empleado_rol') === 'admin')
                         <td>
-                            <div class="dropdown" onclick="toggleDropdown(this)">
-                                <button class="dropdown-btn">Opciones ▾</button>
-                                <div class="dropdown-menu">
-                                    <button class="dropdown-item warning"
+                            <div class="Menu_Opciones" onclick="toggleDropdown(this)">
+                                <button class="Boton_Opciones">Opciones ▾</button>
+                                <div class="Menu_Lista">
+                                    <button class="Menu_Item Opcion_Aviso"
                                         onclick="abrirEditar({{ $promo->id_promocion }}, '{{ $promo->porcentaje_descuento }}', '{{ addslashes($promo->requisito) }}')">
                                         ✏️ Editar
                                     </button>
-                                    <div class="dropdown-divider"></div>
+                                    <div class="Menu_Divisor"></div>
                                     <form action="{{ route('promociones.destroy', $promo->id_promocion) }}" method="POST"
                                           onsubmit="return confirm('¿Eliminar?')">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="dropdown-item danger">🗑 Eliminar</button>
+                                        <button type="submit" class="Menu_Item Opcion_Peligro">🗑 Eliminar</button>
                                     </form>
                                 </div>
                             </div>
@@ -70,35 +73,35 @@
 </div>
 
 @if(session('empleado_rol') === 'admin')
-<div class="modal-overlay" id="modalNueva">
-    <div class="modal-box">
-        <h2 class="modal-title">🎁 Nueva Promoción</h2>
+<div class="Modal_Fondo" id="modalNueva">
+    <div class="Modal_Caja">
+        <h2 class="Modal_Titulo">🎁 Nueva Promoción</h2>
         <form action="{{ route('promociones.store') }}" method="POST">
             @csrf
-            <label class="modal-label">Descuento (%) *</label>
-            <input type="number" name="porcentaje_descuento" class="modal-input" min="1" max="100" step="0.01" required>
-            <label class="modal-label">Requisito *</label>
-            <textarea name="requisito" class="modal-textarea" required></textarea>
-            <div class="modal-botones">
-                <button type="button" class="modal-btn-cancel" onclick="document.getElementById('modalNueva').classList.remove('active')">Cancelar</button>
-                <button type="submit" class="modal-btn-save">Guardar</button>
+            <label class="Modal_Etiqueta">Descuento (%) *</label>
+            <input type="number" name="porcentaje_descuento" class="Modal_Input" min="1" max="100" step="0.01" required>
+            <label class="Modal_Etiqueta">Requisito *</label>
+            <textarea name="requisito" class="Modal_Textarea" required></textarea>
+            <div class="Modal_Botones">
+                <button type="button" class="Modal_Cancelar" onclick="document.getElementById('modalNueva').classList.remove('active')">Cancelar</button>
+                <button type="submit" class="Modal_Guardar">Guardar</button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="modal-overlay" id="modalEditar">
-    <div class="modal-box">
-        <h2 class="modal-title">✏️ Editar Promoción</h2>
+<div class="Modal_Fondo" id="modalEditar">
+    <div class="Modal_Caja">
+        <h2 class="Modal_Titulo">✏️ Editar Promoción</h2>
         <form id="formEditar" method="POST">
             @csrf @method('PUT')
-            <label class="modal-label">Descuento (%) *</label>
-            <input type="number" id="editDescuento" name="porcentaje_descuento" class="modal-input" required>
-            <label class="modal-label">Requisito *</label>
-            <textarea id="editRequisito" name="requisito" class="modal-textarea" required></textarea>
-            <div class="modal-botones">
-                <button type="button" class="modal-btn-cancel" onclick="document.getElementById('modalEditar').classList.remove('active')">Cancelar</button>
-                <button type="submit" class="modal-btn-save">Actualizar</button>
+            <label class="Modal_Etiqueta">Descuento (%) *</label>
+            <input type="number" id="editDescuento" name="porcentaje_descuento" class="Modal_Input" required>
+            <label class="Modal_Etiqueta">Requisito *</label>
+            <textarea id="editRequisito" name="requisito" class="Modal_Textarea" required></textarea>
+            <div class="Modal_Botones">
+                <button type="button" class="Modal_Cancelar" onclick="document.getElementById('modalEditar').classList.remove('active')">Cancelar</button>
+                <button type="submit" class="Modal_Guardar">Actualizar</button>
             </div>
         </form>
     </div>
@@ -108,10 +111,10 @@
 <script>
 function toggleDropdown(el) {
     event.stopPropagation();
-    document.querySelectorAll('.dropdown.open').forEach(d => { if(d!==el) d.classList.remove('open'); });
+    document.querySelectorAll('.Menu_Opciones.open').forEach(d => { if(d!==el) d.classList.remove('open'); });
     el.classList.toggle('open');
 }
-document.addEventListener('click', () => document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open')));
+document.addEventListener('click', () => document.querySelectorAll('.Menu_Opciones.open').forEach(d => d.classList.remove('open')));
 
 function abrirEditar(id, desc, req) {
     document.getElementById('editDescuento').value = desc;

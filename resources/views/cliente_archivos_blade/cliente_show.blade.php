@@ -5,33 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle Cliente — GymTrainer</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/fondo.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/componentes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tabla.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/detalle.css') }}">
 </head>
 <body>
 
 @include('layouts.sidebar')
 
-<div class="main-content">
-    <div class="page-header">
-        <h1 class="page-title">👤 Detalle del Cliente</h1>
-        <div class="page-actions">
-            <a href="{{ route('clientes.edit', $cliente->Ci) }}" class="btn btn-warning">✏️ Editar</a>
-            <a href="{{ route('clientes.index') }}" class="btn btn-secondary">← Volver</a>
+<div class="Contenido_Principal">
+    <div class="Encabezado_Pagina">
+        <h1 class="Titulo_Pagina">👤 Detalle del Cliente</h1>
+        <div class="Acciones_Pagina">
+            <a href="{{ route('clientes.edit', $cliente->Ci) }}" class="Boton Boton_Aviso">✏️ Editar</a>
+            <a href="{{ route('clientes.index') }}" class="Boton Boton_Secundario">← Volver</a>
         </div>
     </div>
 
     <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start;">
-        <div class="card" style="flex:1; min-width:280px;">
+        <div class="Tarjeta" style="flex:1; min-width:280px;">
             <p style="color:#2ECC71; font-size:12px; font-weight:700; letter-spacing:0.8px; margin-bottom:12px;">DATOS PERSONALES</p>
-            <div class="detalle">
-                <div class="detalle-fila"><span class="detalle-label">CI</span><span class="detalle-valor">{{ $cliente->Ci }}</span></div>
-                <div class="detalle-fila"><span class="detalle-label">Nombre</span><span class="detalle-valor">{{ $cliente->nombre }}</span></div>
-                <div class="detalle-fila"><span class="detalle-label">Ap. Paterno</span><span class="detalle-valor">{{ $cliente->apaterno }}</span></div>
-                <div class="detalle-fila"><span class="detalle-label">Ap. Materno</span><span class="detalle-valor">{{ $cliente->amaterno ?? '—' }}</span></div>
+            <div class="Detalle">
+                <div class="Detalle_Fila"><span class="Detalle_Etiqueta">CI</span><span class="Detalle_Valor">{{ $cliente->Ci }}</span></div>
+                <div class="Detalle_Fila"><span class="Detalle_Etiqueta">Nombre</span><span class="Detalle_Valor">{{ $cliente->nombre }}</span></div>
+                <div class="Detalle_Fila"><span class="Detalle_Etiqueta">Ap. Paterno</span><span class="Detalle_Valor">{{ $cliente->apaterno }}</span></div>
+                <div class="Detalle_Fila"><span class="Detalle_Etiqueta">Ap. Materno</span><span class="Detalle_Valor">{{ $cliente->amaterno ?? '—' }}</span></div>
             </div>
         </div>
 
-        <div class="card" style="flex:2; min-width:300px;">
+        <div class="Tarjeta" style="flex:2; min-width:300px;">
             <p style="color:#2ECC71; font-size:12px; font-weight:700; letter-spacing:0.8px; margin-bottom:12px;">HISTORIAL DE INSCRIPCIONES</p>
             @if($inscripciones->isEmpty())
                 <p style="color:#555; font-size:13px;">Sin inscripciones.</p>
@@ -49,15 +53,15 @@
                         @foreach($inscripciones as $ins)
                         @php
                             $dias = \Carbon\Carbon::today()->diffInDays(\Carbon\Carbon::parse($ins->fecha_vencimiento), false);
-                            if ($dias < 0) { $sc='badge-vencido'; $st='Vencido'; }
-                            elseif ($dias <= 5) { $sc='badge-por-vencer'; $st='Por vencer'; }
-                            else { $sc='badge-activo'; $st='Activo'; }
+                            if ($dias < 0) { $sc='Estado-vencido'; $st='Vencido'; }
+                            elseif ($dias <= 5) { $sc='Estado-por-vencer'; $st='Por vencer'; }
+                            else { $sc='Estado-activo'; $st='Activo'; }
                         @endphp
                         <tr>
                             <td>{{ \Carbon\Carbon::parse($ins->fecha_inscripcion)->format('d/m/Y') }}</td>
                             <td>{{ \Carbon\Carbon::parse($ins->fecha_vencimiento)->format('d/m/Y') }}</td>
                             <td>Bs. {{ number_format($ins->monto, 2) }}</td>
-                            <td><span class="badge {{ $sc }}">{{ $st }}</span></td>
+                            <td><span class="Estado {{ $sc }}">{{ $st }}</span></td>
                         </tr>
                         @endforeach
                     </tbody>

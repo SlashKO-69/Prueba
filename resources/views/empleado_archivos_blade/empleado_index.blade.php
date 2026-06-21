@@ -5,25 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Empleados — GymTrainer</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/fondo.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/componentes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tabla.css') }}">
 </head>
 <body>
 
 @include('layouts.sidebar')
 
-<div class="main-content">
-    <div class="page-header">
-        <h1 class="page-title">⚙️ Gestión de Empleados</h1>
-        <div class="page-actions">
-            <a href="{{ route('empleados.create') }}" class="btn btn-primary">+ Nuevo Empleado</a>
+<div class="Contenido_Principal">
+    <div class="Encabezado_Pagina">
+        <h1 class="Titulo_Pagina">⚙️ Gestión de Empleados</h1>
+        <div class="Acciones_Pagina">
+            <a href="{{ route('empleados.create') }}" class="Boton Boton_Principal">+ Nuevo Empleado</a>
         </div>
     </div>
 
-    @if(session('success')) <div class="alert-success">✅ {{ session('success') }}</div> @endif
+    @if(session('success')) <div class="Mostrar_Bien">✅ {{ session('success') }}</div> @endif
 
-    <div class="card">
+    <div class="Tarjeta">
         @if($empleados->isEmpty())
-            <div class="empty-state">No hay empleados registrados.</div>
+            <div class="Sin_Registros">No hay empleados registrados.</div>
         @else
             <table>
                 <thead>
@@ -43,18 +46,18 @@
                         <td>{{ $empleado->nombre }}</td>
                         <td>{{ $empleado->apaterno }}</td>
                         <td>{{ $empleado->celular ?? '—' }}</td>
-                        <td><span class="badge {{ $empleado->rol==='admin'?'badge-activo':'badge-pendiente' }}">{{ ucfirst($empleado->rol) }}</span></td>
+                        <td><span class="Estado {{ $empleado->rol==='admin'?'Estado-activo':'Estado-pendiente' }}">{{ ucfirst($empleado->rol) }}</span></td>
                         <td>
-                            <div class="dropdown" onclick="toggleDropdown(this)">
-                                <button class="dropdown-btn">Opciones ▾</button>
-                                <div class="dropdown-menu">
-                                    <a href="{{ route('empleados.show', $empleado->ci_empleado) }}" class="dropdown-item">👁 Ver detalle</a>
-                                    <a href="{{ route('empleados.edit', $empleado->ci_empleado) }}" class="dropdown-item warning">✏️ Editar</a>
-                                    <div class="dropdown-divider"></div>
+                            <div class="Menu_Opciones" onclick="toggleDropdown(this)">
+                                <button class="Boton_Opciones">Opciones ▾</button>
+                                <div class="Menu_Lista">
+                                    <a href="{{ route('empleados.show', $empleado->ci_empleado) }}" class="Menu_Item">👁 Ver detalle</a>
+                                    <a href="{{ route('empleados.edit', $empleado->ci_empleado) }}" class="Menu_Item Opcion_Aviso">✏️ Editar</a>
+                                    <div class="Menu_Divisor"></div>
                                     <form action="{{ route('empleados.destroy', $empleado->ci_empleado) }}" method="POST"
                                           onsubmit="return confirm('¿Eliminar empleado {{ $empleado->nombre }}?')">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="dropdown-item danger">🗑 Eliminar</button>
+                                        <button type="submit" class="Menu_Item Opcion_Peligro">🗑 Eliminar</button>
                                     </form>
                                 </div>
                             </div>
@@ -64,7 +67,7 @@
                 </tbody>
             </table>
             <div style="margin-top:16px;">
-                <span class="total-badge">Total: <span>{{ $empleados->count() }}</span> empleados</span>
+                <span class="Total_Registros">Total: <span>{{ $empleados->count() }}</span> empleados</span>
             </div>
         @endif
     </div>
@@ -73,11 +76,10 @@
 <script>
 function toggleDropdown(el) {
     event.stopPropagation();
-    document.querySelectorAll('.dropdown.open').forEach(d => { if(d!==el) d.classList.remove('open'); });
+    document.querySelectorAll('.Menu_Opciones.open').forEach(d => { if(d!==el) d.classList.remove('open'); });
     el.classList.toggle('open');
 }
-document.addEventListener('click', () => document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open')));
+document.addEventListener('click', () => document.querySelectorAll('.Menu_Opciones.open').forEach(d => d.classList.remove('open')));
 </script>
-
 </body>
 </html>

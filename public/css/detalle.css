@@ -1,23 +1,23 @@
-.detalle {
+/* contenedor de los datos en la vista de detalle */
+.Detalle{
     margin-top: 10px;
     text-align: left;
 }
 
-.detalle-fila {
+/* cada fila con su etiqueta y su valor */
+.Detalle_Fila{
     display: flex;
     justify-content: space-between;
-    align-items: center;
     padding: 12px 0;
     border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
-.detalle-label {
+.Detalle_Etiqueta{
     color: #2ECC71;
     font-size: 14px;
-    font-weight: 500;
 }
 
-.detalle-valor {
+.Detalle_Valor{
     color: #eee;
     font-size: 15px;
 }

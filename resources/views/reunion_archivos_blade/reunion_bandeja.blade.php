@@ -5,22 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Reuniones — GymTrainer</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/fondo.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/componentes.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tabla.css') }}">
 </head>
 <body>
 
 @include('layouts.sidebar')
 
-<div class="main-content">
-    <div class="page-header">
-        <h1 class="page-title">📬 Mi bandeja</h1>
+<div class="Contenido_Principal">
+    <div class="Encabezado_Pagina">
+        <h1 class="Titulo_Pagina">📬 Mi bandeja</h1>
     </div>
 
-    @if(session('success')) <div class="alert-success">✅ {{ session('success') }}</div> @endif
+    @if(session('success')) <div class="Mostrar_Bien">✅ {{ session('success') }}</div> @endif
 
-    <div class="card">
+    <div class="Tarjeta">
         @if($reuniones->isEmpty())
-            <div class="empty-state">No tienes reuniones asignadas.</div>
+            <div class="Sin_Registros">No tienes reuniones asignadas.</div>
         @else
             <table>
                 <thead>
@@ -37,13 +40,13 @@
                         $ci         = session('empleado_ci');
                         $asistencia = $reunion->asistencia ?? [];
                         $estado     = $asistencia[$ci] ?? 'pendiente';
-                        $badgeClass = $estado === 'asistió' ? 'badge-activo' : ($estado === 'no asistió' ? 'badge-vencido' : 'badge-pendiente');
+                        $sc = $estado === 'asistió' ? 'Estado-activo' : ($estado === 'no asistió' ? 'Estado-vencido' : 'Estado-pendiente');
                     @endphp
                     <tr>
                         <td>{{ \Carbon\Carbon::parse($reunion->fecha_reunion)->format('d/m/Y') }}</td>
                         <td>{{ $reunion->hora_reunion }}</td>
                         <td>{{ $reunion->motivo }}</td>
-                        <td><span class="badge {{ $badgeClass }}">{{ ucfirst($estado) }}</span></td>
+                        <td><span class="Estado {{ $sc }}">{{ ucfirst($estado) }}</span></td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -51,6 +54,5 @@
         @endif
     </div>
 </div>
-
 </body>
 </html>
