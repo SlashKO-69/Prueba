@@ -89,6 +89,24 @@ class SesionController extends Controller
         return view('sesion_archivos_blade.sesion_show', compact('sesion', 'detalle'));
     }
 
+    public function agregarDetalle(Request $request, $id)
+    {
+        $this->verificarSesion();
+
+        $request->validate([
+            'ci_empleado' => 'nullable|exists:empleados,ci_empleado',
+            'Detalles'    => 'required|string|max:500',
+        ]);
+
+        DetalleSesion::create([
+            'id_sesion'   => $id,
+            'ci_empleado' => $request->ci_empleado,
+            'Detalles'    => $request->Detalles,
+        ]);
+
+        return redirect()->route('sesiones.show', $id)->with('success', 'Detalle agregado correctamente.');
+    }
+
     public function destroy($id)
     {
         $this->verificarSesion();

@@ -17,9 +17,21 @@ class ClienteController extends Controller
         }
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $this->verificarSesion();
+
+        $buscar   = $request->input('buscar', '');
+        $estado   = $request->input('estado', '');
+        $ordenar  = $request->input('ordenar', 'Ci');
+        $direccion = $request->input('direccion', 'asc');
+
+        $columnasPermitidas = ['Ci', 'nombre', 'apaterno', 'amaterno', 'fecha_vencimiento', 'dias_restantes', 'estado'];
+        if (!in_array($ordenar, $columnasPermitidas)) {
+            $ordenar = 'Ci';
+        }
+        $direccion = strtolower($direccion) === 'desc' ? 'desc' : 'asc';
+
         $clientes = Cliente::with('inscripciones')->get();
 
         $clientes->each(function ($cliente) {
@@ -35,8 +47,45 @@ class ClienteController extends Controller
             }
         });
 
+        if ($buscar) {
+            $clientes = $clientes->filter(function ($cliente) use ($buscar) {
+                $busqueda = strtolower($buscar);
+                return str_contains(strtolower($cliente->nombre), $busqueda)
+                    || str_contains(strtolower($cliente->apaterno), $busqueda)
+                    || str_contains(strtolower($cliente->amaterno ?? ''), $busqueda)
+                    || str_contains(strtolower($cliente->Ci), $busqueda);
+            });
+        }
+
+        if ($estado) {
+            $clientes = $clientes->filter(function ($cliente) use ($estado) {
+                $dias = $cliente->dias_restantes;
+                return match($estado) {
+                    'activo'      => !is_null($dias) && $dias > 5,
+                    'por-vencer'  => !is_null($dias) && $dias >= 0 && $dias <= 5,
+                    'vencido'     => !is_null($dias) && $dias < 0,
+                    default       => true,
+                };
+            });
+        }
+
+        $clientes = $clientes->sortBy(function ($cliente) use ($ordenar) {
+            return match($ordenar) {
+                'Ci'                  => $cliente->Ci,
+                'nombre'              => $cliente->nombre,
+                'apaterno'            => $cliente->apaterno,
+                'amaterno'            => $cliente->amaterno ?? '',
+                'fecha_vencimiento'   => $cliente->fecha_vencimiento ?? '0000-00-00',
+                'dias_restantes'      => $cliente->dias_restantes ?? 999999,
+                'estado'              => $cliente->dias_restantes,
+                default               => $cliente->Ci,
+            };
+        }, SORT_REGULAR, $direccion === 'desc');
+
+        $clientes = $clientes->values();
+
         $promociones = Promocion::all();
-        return view('cliente_archivos_blade.cliente_index', compact('clientes', 'promociones'));
+        return view('cliente_archivos_blade.cliente_index', compact('clientes', 'promociones', 'buscar', 'estado', 'ordenar', 'direccion'));
     }
 
     public function create()

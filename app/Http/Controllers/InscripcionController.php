@@ -32,7 +32,8 @@ class InscripcionController extends Controller
     public function create()
     {
         $this->verificarSesion();
-        return view('inscripcion_archivos_blade.inscripcion_create');
+        $promociones = Promocion::all();
+        return view('inscripcion_archivos_blade.inscripcion_create', compact('promociones'));
     }
 
     public function store(Request $request)
@@ -40,14 +41,18 @@ class InscripcionController extends Controller
         $this->verificarSesion();
 
         $request->validate([
-            'meses' => 'required|integer|min:1|max:24',
-            'monto' => 'required|numeric|min:1',
+            'ci_cliente'    => 'required|exists:clientes,Ci',
+            'id_promocion'  => 'nullable|exists:promocions,id_promocion',
+            'meses'         => 'required|integer|min:1|max:24',
+            'monto'         => 'required|numeric|min:1',
         ]);
 
         $fechaInscripcion = Carbon::today();
         $fechaVencimiento = Carbon::today()->addMonths((int) $request->meses);
 
         Inscripcion::create([
+            'ci_cliente'        => $request->ci_cliente,
+            'id_promocion'      => $request->id_promocion ?: null,
             'fecha_inscripcion' => $fechaInscripcion->toDateString(),
             'fecha_vencimiento' => $fechaVencimiento->toDateString(),
             'monto'             => $request->monto,
