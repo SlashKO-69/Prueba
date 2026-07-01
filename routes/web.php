@@ -23,6 +23,7 @@ Route::resource('empleados', EmpleadoController::class);
 
 // ─── CRUD Clientes ───────────────────────────────────────
 Route::resource('clientes', ClienteController::class);
+Route::get('clientes/exportar/excel', [ClienteController::class, 'exportarExcel'])->name('clientes.exportarExcel');
 Route::post('clientes/{ci}/reinscribir', [ClienteController::class, 'reinscribir'])->name('clientes.reinscribir');
 
 // ─── Inscripciones ───────────────────────────────────────

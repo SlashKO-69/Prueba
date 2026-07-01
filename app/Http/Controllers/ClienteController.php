@@ -70,7 +70,7 @@ class ClienteController extends Controller
         }
 
         $clientes = $clientes->sortBy(function ($cliente) use ($ordenar) {
-            return match($ordenar) {
+            $valor = match($ordenar) {
                 'Ci'                  => $cliente->Ci,
                 'nombre'              => $cliente->nombre,
                 'apaterno'            => $cliente->apaterno,
@@ -80,6 +80,7 @@ class ClienteController extends Controller
                 'estado'              => $cliente->dias_restantes,
                 default               => $cliente->Ci,
             };
+            return is_string($valor) ? strtolower($valor) : $valor;
         }, SORT_REGULAR, $direccion === 'desc');
 
         $clientes = $clientes->values();
@@ -204,5 +205,105 @@ class ClienteController extends Controller
         ]);
 
         return redirect()->route('clientes.index')->with('success', 'Cliente reinscrito correctamente.');
+    }
+
+    public function exportarExcel(Request $request)
+    {
+        $this->verificarSesion();
+
+        $buscar  = $request->input('buscar', '');
+        $estado  = $request->input('estado', '');
+
+        $clientes = Cliente::with('inscripciones')->get();
+
+        $clientes->each(function ($cliente) {
+            $ultima = $cliente->inscripciones->sortByDesc('fecha_vencimiento')->first();
+            if ($ultima) {
+                $cliente->dias_restantes    = Carbon::today()->diffInDays(Carbon::parse($ultima->fecha_vencimiento), false);
+                $cliente->fecha_vencimiento = $ultima->fecha_vencimiento;
+                $cliente->monto             = $ultima->monto;
+            } else {
+                $cliente->dias_restantes    = null;
+                $cliente->fecha_vencimiento = null;
+                $cliente->monto             = null;
+            }
+        });
+
+        if ($buscar) {
+            $clientes = $clientes->filter(function ($cliente) use ($buscar) {
+                $busqueda = strtolower($buscar);
+                return str_contains(strtolower($cliente->nombre), $busqueda)
+                    || str_contains(strtolower($cliente->apaterno), $busqueda)
+                    || str_contains(strtolower($cliente->amaterno ?? ''), $busqueda)
+                    || str_contains(strtolower($cliente->Ci), $busqueda);
+            });
+        }
+
+        if ($estado) {
+            $clientes = $clientes->filter(function ($cliente) use ($estado) {
+                $dias = $cliente->dias_restantes;
+                return match($estado) {
+                    'activo'      => !is_null($dias) && $dias > 5,
+                    'por-vencer'  => !is_null($dias) && $dias >= 0 && $dias <= 5,
+                    'vencido'     => !is_null($dias) && $dias < 0,
+                    default       => true,
+                };
+            });
+        }
+
+        $ordenar   = $request->input('ordenar', 'Ci');
+        $direccion = $request->input('direccion', 'asc');
+
+        $columnasPermitidas = ['Ci', 'nombre', 'apaterno', 'amaterno', 'fecha_vencimiento', 'dias_restantes', 'estado'];
+        if (!in_array($ordenar, $columnasPermitidas)) {
+            $ordenar = 'Ci';
+        }
+        $direccion = strtolower($direccion) === 'desc' ? 'desc' : 'asc';
+
+        $clientes = $clientes->sortBy(function ($cliente) use ($ordenar) {
+            $valor = match($ordenar) {
+                'Ci'                  => $cliente->Ci,
+                'nombre'              => $cliente->nombre,
+                'apaterno'            => $cliente->apaterno,
+                'amaterno'            => $cliente->amaterno ?? '',
+                'fecha_vencimiento'   => $cliente->fecha_vencimiento ?? '0000-00-00',
+                'dias_restantes'      => $cliente->dias_restantes ?? 999999,
+                'estado'              => $cliente->dias_restantes,
+                default               => $cliente->Ci,
+            };
+            return is_string($valor) ? strtolower($valor) : $valor;
+        }, SORT_REGULAR, $direccion === 'desc');
+
+        $filename = 'clientes_' . date('Y-m-d_H-i-s') . '.csv';
+        $headers = [
+            'Content-Type'       => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function () use ($clientes) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            fputcsv($file, ['CI', 'Nombre', 'A. Paterno', 'A. Materno', 'Fecha Vencimiento', 'Dias Restantes', 'Estado', 'Monto (Bs.)'], ';');
+            foreach ($clientes as $cliente) {
+                $dias = $cliente->dias_restantes;
+                if (is_null($dias)) { $estado = 'Sin inscripcion'; }
+                elseif ($dias < 0) { $estado = 'Vencido'; }
+                elseif ($dias <= 5) { $estado = 'Por vencer'; }
+                else { $estado = 'Activo'; }
+                fputcsv($file, [
+                    $cliente->Ci,
+                    $cliente->nombre,
+                    $cliente->apaterno,
+                    $cliente->amaterno ?? '',
+                    $cliente->fecha_vencimiento ?? '',
+                    $dias ?? '',
+                    $estado,
+                    $cliente->monto ?? '',
+                ], ';');
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

@@ -18,6 +18,8 @@
     <div class="Encabezado_Pagina">
         <h1 class="Titulo_Pagina">👥 Gestión de Clientes</h1>
         <div class="Acciones_Pagina">
+            <a href="{{ route('clientes.exportarExcel', ['buscar' => $buscar, 'estado' => $estado, 'ordenar' => $ordenar, 'direccion' => $direccion]) }}"
+               class="Boton Boton_Exportar">Descargar Excel</a>
             <a href="{{ route('clientes.create') }}" class="Boton Boton_Principal">+ Nuevo Cliente</a>
         </div>
     </div>
