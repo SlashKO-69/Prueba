@@ -31,6 +31,7 @@
 .Boton_Principal{ background: #2ECC71; color: #111; }
 .Boton_Secundario{ background: transparent; border: 1px solid #2ECC71; color: #2ECC71; }
 .Boton_Aviso{ background: #ffc107; color: #111; }
+.Boton_Exportar{ background: rgba(46,204,113,0.15); border: 1px solid rgba(46,204,113,0.4); color: #2ECC71; }
 .btn-danger{ background: #dc3545; color: #fff; }
 .btn-info{ background: #17a2b8; color: #fff; }
 .btn-purple{ background: #6f42c1; color: #fff; }
@@ -231,5 +232,138 @@
 }
 
 .Tarjeta p.Detalle_Etiqueta {
+    color: #2ECC71;
+}
+
+.Filtros_Container{
+    background: rgba(10,20,40,0.85);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(46,204,113,0.1);
+    margin-bottom: 20px;
+}
+
+.Filtros_Form{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.Busqueda_Grupo{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.Busqueda_Input{
+    flex: 1;
+    min-width: 250px;
+    padding: 10px 14px;
+    border: 1px solid rgba(46,204,113,0.2);
+    border-radius: 7px;
+    background: #0d1a30;
+    color: #eee;
+    font-size: 14px;
+    outline: none;
+}
+
+.Busqueda_Input:focus{
+    border-color: rgba(46,204,113,0.5);
+}
+
+.Busqueda_Input::placeholder{
+    color: #666;
+}
+
+.Buscar_Boton{
+    padding: 10px 20px;
+    background: #2ECC71;
+    color: #111;
+    font-weight: 600;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.Buscar_Boton:hover{
+    background: #27ae60;
+}
+
+.Buscar_Limpiar{
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid rgba(255,68,68,0.4);
+    color: #ff6b6b;
+    border-radius: 7px;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.Buscar_Limpiar:hover{
+    background: rgba(255,68,68,0.1);
+}
+
+.Filtros_Botones{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.Filtros_Label{
+    color: #888;
+    font-size: 13px;
+    margin-right: 8px;
+}
+
+.Boton_Filtro{
+    padding: 7px 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    color: #aaa;
+    text-decoration: none;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.Boton_Filtro:hover{
+    background: rgba(46,204,113,0.1);
+    color: #2ECC71;
+    border-color: rgba(46,204,113,0.3);
+}
+
+.Boton_Filtro_Activo{
+    background: rgba(46,204,113,0.15);
+    color: #2ECC71;
+    border-color: rgba(46,204,113,0.4);
+    font-weight: 600;
+}
+
+.Th_Ordenable{
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+.Th_Ordenable a{
+    color: #2ECC71;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+}
+
+.Th_Ordenable a:hover{
+    color: #27ae60;
+}
+
+.Th_Orden_Activo{
+    background: rgba(46,204,113,0.08);
+}
+
+.Th_Orden_Activo a{
     color: #2ECC71;
 }
