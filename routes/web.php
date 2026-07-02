@@ -28,6 +28,7 @@ Route::post('clientes/{ci}/reinscribir', [ClienteController::class, 'reinscribir
 // ─── Inscripciones ───────────────────────────────────────
 Route::resource('inscripciones', InscripcionController::class)->except(['edit', 'update', 'create']);
 Route::get('inscripciones/nueva', [InscripcionController::class, 'create'])->name('inscripciones.create');
+Route::get('inscripciones/exportar/excel', [InscripcionController::class, 'exportarExcel'])->name('inscripciones.exportarExcel');
 
 // ─── Promociones ─────────────────────────────────────────
 Route::get('promociones', [PromocionController::class, 'index'])->name('promociones.index');

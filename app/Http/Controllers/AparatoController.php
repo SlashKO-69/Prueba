@@ -53,6 +53,6 @@ class AparatoController extends Controller
     {
         $this->soloAdmin();
         Aparato::destroy($id);
-        return redirect()->route('aparatos.index')->with('success', 'Aparato eliminado.');
+        return redirect()->route('aparatos.index')->with('success', 'Aparato eliminado correctamente.');
     }
 }

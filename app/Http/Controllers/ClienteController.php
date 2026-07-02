@@ -145,7 +145,7 @@ class ClienteController extends Controller
             'monto'             => $request->monto,
         ]);
 
-        // Registro automático en flujo de caja
+         //Registro automático en flujo de caja
         \App\Models\Flujo_Caja::create([
             'asunto'          => 'Inscripción de cliente',
             'cantidad_dinero' => $request->monto,

@@ -17,9 +17,43 @@
 <div class="Contenido_Principal">
     <div class="Encabezado_Pagina">
         <h1 class="Titulo_Pagina">📋 Inscripciones</h1>
+        <div class="Acciones_Pagina">
+            <a href="{{ route('inscripciones.exportarExcel', ['buscar' => $buscar, 'estado' => $estado, 'ordenar' => $ordenar, 'direccion' => $direccion]) }}"
+               class="Boton Boton_Exportar">Descargar Excel</a>
+            <a href="{{ route('inscripciones.create') }}" class="Boton Boton_Principal">+ Nueva Inscripción</a>
+        </div>
     </div>
 
     @if(session('success')) <div class="Mostrar_Bien">✅ {{ session('success') }}</div> @endif
+
+    <div class="Filtros_Container">
+        <form method="GET" action="{{ route('inscripciones.index') }}" class="Filtros_Form">
+            <input type="hidden" name="ordenar" value="{{ $ordenar }}">
+            <input type="hidden" name="direccion" value="{{ $direccion }}">
+
+            <div class="Busqueda_Grupo">
+                <input type="text" name="buscar" value="{{ $buscar }}" placeholder="Buscar por cliente o CI..."
+                       class="Busqueda_Input">
+                <button type="submit" class="Boton Buscar_Boton">Buscar</button>
+                @if($buscar)
+                    <a href="{{ route('inscripciones.index', ['estado' => $estado, 'ordenar' => $ordenar, 'direccion' => $direccion]) }}"
+                       class="Boton Buscar_Limpiar">Limpiar</a>
+                @endif
+            </div>
+
+            <div class="Filtros_Botones">
+                <span class="Filtros_Label">Filtrar por estado:</span>
+                <a href="{{ route('inscripciones.index', ['buscar' => $buscar, 'estado' => '', 'ordenar' => $ordenar, 'direccion' => $direccion]) }}"
+                   class="Boton_Filtro {{ $estado === '' ? 'Boton_Filtro_Activo' : '' }}">Todos</a>
+                <a href="{{ route('inscripciones.index', ['buscar' => $buscar, 'estado' => 'activo', 'ordenar' => $ordenar, 'direccion' => $direccion]) }}"
+                   class="Boton_Filtro {{ $estado === 'activo' ? 'Boton_Filtro_Activo' : '' }}">Activos</a>
+                <a href="{{ route('inscripciones.index', ['buscar' => $buscar, 'estado' => 'por-vencer', 'ordenar' => $ordenar, 'direccion' => $direccion]) }}"
+                   class="Boton_Filtro {{ $estado === 'por-vencer' ? 'Boton_Filtro_Activo' : '' }}">Por vencer</a>
+                <a href="{{ route('inscripciones.index', ['buscar' => $buscar, 'estado' => 'vencido', 'ordenar' => $ordenar, 'direccion' => $direccion]) }}"
+                   class="Boton_Filtro {{ $estado === 'vencido' ? 'Boton_Filtro_Activo' : '' }}">Vencidos</a>
+            </div>
+        </form>
+    </div>
 
     <div class="Tarjeta">
         @if($inscripciones->isEmpty())
@@ -28,14 +62,61 @@
             <table>
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Cliente</th>
-                        <th>CI</th>
-                        <th>Inscripción</th>
-                        <th>Vencimiento</th>
-                        <th>Días restantes</th>
-                        <th>Monto</th>
-                        <th>Estado</th>
+                        @php
+                            function urlOrdenar($col, $buscar, $estado, $ordenar, $direccion) {
+                                $nuevaDireccion = ($ordenar === $col && $direccion === 'asc') ? 'desc' : 'asc';
+                                return route('inscripciones.index', [
+                                    'buscar' => $buscar,
+                                    'estado' => $estado,
+                                    'ordenar' => $col,
+                                    'direccion' => $nuevaDireccion
+                                ]);
+                            }
+                            function iconoOrden($col, $ordenar, $direccion) {
+                                if ($ordenar !== $col) return '';
+                                return $direccion === 'asc' ? ' &#9650;' : ' &#9660;';
+                            }
+                        @endphp
+                        <th class="Th_Ordenable {{ $ordenar === 'id' ? 'Th_Orden_Activo' : '' }}">
+                            <a href="{{ urlOrdenar('id', $buscar, $estado, $ordenar, $direccion) }}">
+                                # {!! iconoOrden('id', $ordenar, $direccion) !!}
+                            </a>
+                        </th>
+                        <th class="Th_Ordenable {{ $ordenar === 'cliente' ? 'Th_Orden_Activo' : '' }}">
+                            <a href="{{ urlOrdenar('cliente', $buscar, $estado, $ordenar, $direccion) }}">
+                                Cliente {!! iconoOrden('cliente', $ordenar, $direccion) !!}
+                            </a>
+                        </th>
+                        <th class="Th_Ordenable {{ $ordenar === 'ci_cliente' ? 'Th_Orden_Activo' : '' }}">
+                            <a href="{{ urlOrdenar('ci_cliente', $buscar, $estado, $ordenar, $direccion) }}">
+                                CI {!! iconoOrden('ci_cliente', $ordenar, $direccion) !!}
+                            </a>
+                        </th>
+                        <th class="Th_Ordenable {{ $ordenar === 'fecha_inscripcion' ? 'Th_Orden_Activo' : '' }}">
+                            <a href="{{ urlOrdenar('fecha_inscripcion', $buscar, $estado, $ordenar, $direccion) }}">
+                                Inscripción {!! iconoOrden('fecha_inscripcion', $ordenar, $direccion) !!}
+                            </a>
+                        </th>
+                        <th class="Th_Ordenable {{ $ordenar === 'fecha_vencimiento' ? 'Th_Orden_Activo' : '' }}">
+                            <a href="{{ urlOrdenar('fecha_vencimiento', $buscar, $estado, $ordenar, $direccion) }}">
+                                Vencimiento {!! iconoOrden('fecha_vencimiento', $ordenar, $direccion) !!}
+                            </a>
+                        </th>
+                        <th class="Th_Ordenable {{ $ordenar === 'dias_restantes' ? 'Th_Orden_Activo' : '' }}">
+                            <a href="{{ urlOrdenar('dias_restantes', $buscar, $estado, $ordenar, $direccion) }}">
+                                Días restantes {!! iconoOrden('dias_restantes', $ordenar, $direccion) !!}
+                            </a>
+                        </th>
+                        <th class="Th_Ordenable {{ $ordenar === 'monto' ? 'Th_Orden_Activo' : '' }}">
+                            <a href="{{ urlOrdenar('monto', $buscar, $estado, $ordenar, $direccion) }}">
+                                Monto {!! iconoOrden('monto', $ordenar, $direccion) !!}
+                            </a>
+                        </th>
+                        <th class="Th_Ordenable {{ $ordenar === 'estado' ? 'Th_Orden_Activo' : '' }}">
+                            <a href="{{ urlOrdenar('estado', $buscar, $estado, $ordenar, $direccion) }}">
+                                Estado {!! iconoOrden('estado', $ordenar, $direccion) !!}
+                            </a>
+                        </th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -69,7 +150,12 @@
                 </tbody>
             </table>
             <div style="margin-top:16px;">
-                <span class="Total_Registros">Total: <span>{{ $inscripciones->count() }}</span> inscripciones</span>
+                <span class="Total_Registros">
+                    Total: <span>{{ $inscripciones->count() }}</span> inscripciones
+                    @if($buscar || $estado)
+                        (filtrados)
+                    @endif
+                </span>
             </div>
         @endif
     </div>
